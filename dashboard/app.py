@@ -1,10 +1,16 @@
 import sys
 import os
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 import joblib
 import streamlit as st
 import pandas as pd
 import plotly.graph_objects as go
 from datetime import datetime, timedelta
+from ai_engine.bot_executor import execute_bot
+from ai_engine.order_manager import save_order, get_orders
+import time
+
+
 
 # --- 1. SYSTEM PATH SETUP ---
 current_dir = os.path.dirname(os.path.abspath(__file__))
@@ -25,22 +31,7 @@ except ModuleNotFoundError:
 # Replace the SESSION STATE INITIALIZATION (around line 25) with:
 
 if 'active_bots' not in st.session_state:
-    st.session_state.active_bots = {
-        "RELIANCE": {
-            "qty": 50, "strat": "Auto-Scout (Buy)", 
-            "entry_date": "2026-01-15", "pnl": 1525.00,
-            "ai_exec_price": 2480.50, "status": "✅ EXECUTED",
-            "manual_levels": {'5% gain': 2572.50, '10% gain': 2695.00, '2% SL': 2401.00},
-            "logs": ["AI Executed @ ₹2,480.50", "P&L: +₹1,525"]
-        },
-        "TCS": {
-            "qty": 20, "strat": "Auto-Scout (Buy)", 
-            "entry_date": "2026-01-20", "pnl": -700.00,
-            "ai_exec_price": 3785.25, "status": "✅ EXECUTED",
-            "manual_levels": {'2% dip': 3820.00, '5% dip': 3629.00},
-            "logs": ["AI Executed @ ₹3,785.25", "Waiting for sell signal"]
-        }
-    }
+    st.session_state.active_bots = {}
 
     
     for ticker in list(st.session_state.active_bots.keys()):
@@ -124,6 +115,23 @@ with tab_stats:
         
         df_summary = pd.DataFrame(summary_data)
         st.dataframe(df_summary, use_container_width=True, hide_index=True)
+        st.markdown("---")
+        
+        orders = get_orders()
+
+        if orders:
+            df_orders = pd.DataFrame(orders)
+
+    # Ensure columns exist safely
+            if 'exit_price' not in df_orders.columns:
+                df_orders['exit_price'] = 0
+
+            if 'pnl' not in df_orders.columns:
+                df_orders['pnl'] = 0
+
+            
+        else:
+            st.info("No AI bot executions yet.")
     else:
         st.info("No active bots deployed.")
 
@@ -134,29 +142,21 @@ with tab_stats:
 with tab_analytics:
     st.header("🔬 AI Technical & Fundamental Analysis")
     
-    col1, col2 = st.columns([2,1])
-    with col1:
-        selected_stock = st.selectbox("📈 Select Stock", available_stocks)
-    with col2:
-        # Auto-detect available timeframes
-        stock_files = [f for f in os.listdir(raw_data_path) if f.startswith(selected_stock + '_')]
-        available_tf = sorted(set([f.split('_')[-1].replace('.csv', '') for f in stock_files]))
-        timeframe = st.selectbox("⏰ Timeframe", available_tf or ['daily'])
+    selected_stock = st.selectbox("📈 Select Stock", available_stocks)
+
+# ✅ FIXED TIMEFRAME
+    timeframe = "minute"
     
     target_file = f"{selected_stock}_{timeframe}.csv"
     full_path = os.path.join(raw_data_path, target_file)
     
     # Intelligent fallback
+    full_path = os.path.join(raw_data_path, f"{selected_stock}_minute.csv")
+
     if not os.path.exists(full_path):
-        daily_path = os.path.join(raw_data_path, f"{selected_stock}_daily.csv")
-        if os.path.exists(daily_path):
-            st.info(f"📊 Using daily data (no {timeframe} available)")
-            full_path = daily_path
-            timeframe = 'daily'
-        else:
-            st.error(f"❌ No data for {selected_stock}. Add {selected_stock}_daily.csv to data/raw/")
-            st.stop()
-    
+        st.error(f"❌ No minute data found for {selected_stock}")
+        st.stop()
+        
     df = load_stock_data(full_path)
     df = apply_indicators(df)
     recent_df = df.tail(120).copy()
@@ -278,7 +278,8 @@ with tab_analytics:
 
 with tab_portfolio:
     st.subheader("🤖 AI Trading Command Center")
-    
+    st.write("ALL BOTS:", st.session_state.active_bots)
+
     # === DEPLOY NEW BOT ===
     st.markdown("---")
     deploy_col1, deploy_col2, deploy_col3, deploy_col4 = st.columns(4)
@@ -294,52 +295,67 @@ with tab_portfolio:
     if st.button("🚀 DEPLOY AI BOT", type="primary", use_container_width=True):
         ticker_file = f"{new_ticker}_daily.csv"
         ticker_path = os.path.join(raw_data_path, ticker_file)
+        st.write("🚀 BUTTON CLICKED")
         
-        if os.path.exists(ticker_path):
-            df = load_stock_data(ticker_path)
-            df = apply_indicators(df)
-            sim_df = df.tail(sim_days)
+        st.write("PATH:", ticker_path)
+        st.write("EXISTS:", os.path.exists(ticker_path))
+        if True:
+
+        # ✅ STEP 1: FIX STRATEGY → ORDER TYPE
+            order_type = "buy" if "Buy" in strategy else "sell"
+
+        # ✅ STEP 2: RUN AI BOT
+            result = execute_bot(
+            stock=new_ticker,
+            quantity=quantity,
+            sim_days=sim_days,
+            order_type=order_type,
+            strategy=strategy
+        )
+           
+
+        # ✅ STEP 3: DEBUG (TEMP — IMPORTANT)
+            st.write("DEBUG RESULT:", result)
+
+        # ✅ STEP 4: SAVE ORDER
+            save_order(result)
+
+        # ✅ STEP 5: GET AI PRICE
+            ai_exec_price = result.get("price", 0)
+
+        # 
+
+        # ✅ STEP 7: UNIQUE BOT ID (VERY IMPORTANT)
+            bot_id = f"{new_ticker}_{int(time.time())}"
+
+        # ✅ STEP 8: STORE IN SESSION
+            st.session_state.active_bots[bot_id] = {
+            'qty': quantity,
+            'strat': strategy,
+            'entry_date': datetime.now().strftime('%Y-%m-%d'),
+            'ai_exec_price': ai_exec_price,
+            'pnl': result.get('pnl', 0),
+            'status': '✅ EXECUTED',
+            'logs': [
+                f"AI Executed @ ₹{ai_exec_price:,.2f}",
+                f"Simulated {sim_days} days"
+            ]
+        }
             
-            if not sim_df.empty:
-                # AI EXECUTION LOGIC
-                if "Buy" in strategy:
-                    ai_exec_price = sim_df['low'].min()  # BUY AT ABSOLUTE LOWEST
-                    manual_levels = {
-                        '2% dip': sim_df['close'].iloc[0] * 0.98,
-                        '5% dip': sim_df['close'].iloc[0] * 0.95,
-                        '10% dip': sim_df['close'].iloc[0] * 0.90
-                    }
-                else:  # Sell
-                    ai_exec_price = sim_df['high'].max()  # SELL AT ABSOLUTE HIGHEST
-                    manual_levels = {
-                        '5% gain': sim_df['close'].iloc[0] * 1.05,
-                        '10% gain': sim_df['close'].iloc[0] * 1.10,
-                        '2% SL': sim_df['close'].iloc[0] * 0.98
-                    }
-                
-                # Store execution results
-                st.session_state.active_bots[new_ticker] = {
-                    'qty': quantity,
-                    'strat': strategy,
-                    'entry_date': str(sim_df.index[0].date()),
-                    'ai_exec_price': ai_exec_price,
-                    'manual_levels': manual_levels,
-                    'status': '✅ EXECUTED',
-                    'logs': [
-                        f"AI Entry Date: {sim_df.index[0].date()}",
-                        f"AI Executed @ ₹{ai_exec_price:,.2f}",
-                        f"Simulated {sim_days} days"
-                    ]
-                }
-                st.success(f"✅ AI Bot EXECUTED {strategy} for {new_ticker}!")
-                st.rerun()
+            st.write("SESSION STATE:", st.session_state.active_bots)
+
+            st.success(f"✅ AI Bot EXECUTED {strategy} for {new_ticker}!")
+
+            st.rerun()
     
     # === ACTIVE POSITIONS ===
     st.markdown("---")
     st.header("📊 Active Positions & AI Analysis")
     
     if st.session_state.active_bots:
-        for ticker, position in st.session_state.active_bots.items():
+        for bot_id, position in st.session_state.active_bots.items():
+    
+            ticker = bot_id.split("_")[0]
             with st.expander(f"📈 {ticker} | {position['strat']} | Qty: {position['qty']}", expanded=True):
                 
                 # === EXECUTION SUMMARY ===
@@ -348,29 +364,58 @@ with tab_portfolio:
                 col2.metric("📅 Entry Date", position['entry_date'])
                 col3.metric("🔄 Status", position['status'])
                 
-                # === AI vs MANUAL COMPARISON TABLE ===
-                st.markdown("**🤖 AI vs Manual Execution Levels**")
-                exec_df = pd.DataFrame({
-                    'Method': ['AI Dynamic'] + list(position['manual_levels'].keys()),
-                    'Price': [f"₹{position['ai_exec_price']:,.2f}"] + 
-                            [f"₹{v:,.2f}" for v in position['manual_levels'].values()],
-                    'Advantage': [f"+₹{position['ai_exec_price'] - min(position['manual_levels'].values()):+.2f}"] + 
-                                [f"+₹{position['ai_exec_price'] - v:+.2f}" for v in position['manual_levels'].values()]
-                })
-                st.table(exec_df)
+                # ✅ LOAD PRICE DATA AGAIN
+                file_path = os.path.join(raw_data_path, f"{ticker}_minute.csv")
+
+                if os.path.exists(file_path):
+
+                    df = pd.read_csv(file_path)
+
+                    close_col = [col for col in df.columns if col.lower() == "close"][0]
+
+                    prices = df[close_col].dropna().tolist()
+
+                    sim_prices = prices[-30:]  # last sim days
+
+                    entry_price = position['ai_exec_price']
+                    qty = position['qty']
+
+                    pnl = [(p - entry_price) * qty for p in sim_prices]
+
+    # ✅ PLOT GRAPH
+                    fig = go.Figure()
+
+                    fig.add_trace(go.Scatter(
+        y=pnl,
+        mode='lines+markers',
+        name='P&L',
+        line=dict(color='#00FF88', width=3)
+    ))
+
+                    fig.update_layout(
+        title="📈 AI Profit & Loss Over Time",
+        xaxis_title="Time",
+        yaxis_title="Profit / Loss (₹)",
+        template="plotly_dark",
+        height=400
+    )
+
+                    st.plotly_chart(fig, use_container_width=True)
+
+    # ✅ CURRENT P&L
+                    current_pnl = pnl[-1]
+                    pnl_percent = (sim_prices[-1] - entry_price) / entry_price * 100
+
+                    st.metric(
+        "💰 Current P&L",
+        f"₹{current_pnl:,.2f}",
+        f"{pnl_percent:+.2f}%"
+    )
+
+                else:
+                    st.warning("⚠️ No dataset found for P&L graph")
                 
-                # === VISUAL COMPARISON CHART ===
-                prices = [position['ai_exec_price']] + list(position['manual_levels'].values())
-                labels = ['AI'] + list(position['manual_levels'].keys())
-                
-                fig = go.Figure(data=[go.Bar(
-                    x=labels, y=prices,
-                    marker_color=['#00FF88'] + ['#FF6666']*len(position['manual_levels']),
-                    text=[f"₹{p:,.0f}" for p in prices],
-                    textposition='auto'
-                )])
-                fig.update_layout(title="AI vs Manual - Execution Prices", height=400)
-                st.plotly_chart(fig, use_container_width=True)
+               
                 
                 # === DETAILED LOGS ===
                 st.markdown("**📜 AI Execution Log**")
