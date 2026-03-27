@@ -1,0 +1,48 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* ─── PURE BLACK professional palette ─── */
+:root {
+  --tv-bg:      #000000;    /* pure black */
+  --tv-bg2:     #0a0a0a;    /* panels */
+  --tv-bg3:     #141414;    /* hover/active */
+  --tv-border:  #1c1c1c;    /* subtle borders */
+  --tv-text:    #d1d4dc;    /* primary text */
+  --tv-text2:   #6b7280;    /* secondary */
+  --tv-text3:   #3d404a;    /* muted */
+  --tv-up:      #089981;    /* TradingView teal */
+  --tv-down:    #F23645;    /* TradingView red */
+  --tv-blue:    #2962ff;    /* accent */
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+html, body, #root {
+  height: 100%;
+  overflow: hidden;
+}
+
+body {
+  font-family: -apple-system, BlinkMacSystemFont, 'Trebuchet MS', Roboto, Ubuntu, sans-serif;
+  background: #000000;
+  color: var(--tv-text);
+  font-size: 12px;
+  -webkit-font-smoothing: antialiased;
+}
+
+::-webkit-scrollbar { width: 3px; height: 3px; }
+::-webkit-scrollbar-track { background: #000; }
+::-webkit-scrollbar-thumb { background: #1c1c1c; border-radius: 2px; }
+
+input, select, button { font-family: inherit; font-size: 12px; }
+input  { background: #000; color: var(--tv-text); border: 1px solid var(--tv-border); outline: none; }
+select { background: #000; color: var(--tv-text); border: 1px solid var(--tv-border); outline: none; }
+input[type=range] { accent-color: var(--tv-text3); }
+
+.tv-up   { color: var(--tv-up);   }
+.tv-down { color: var(--tv-down); }
+
+/* Hide TradingView logo watermark from lightweight-charts */
+a[href*="tradingview"] { display: none !important; }
+
