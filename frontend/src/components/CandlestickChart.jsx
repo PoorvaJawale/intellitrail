@@ -8,9 +8,9 @@ class ChartErrorBoundary extends React.Component {
   render() {
     if (this.state.error) {
       return (
-        <div style={{ width: "100%", height: "100%", display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", background: "#000", gap: 10 }}>
-          <div style={{ fontSize: 12, color: "#3d404a" }}>Chart render error</div>
-          <div style={{ fontSize: 10, color: "#2a2a2a", maxWidth: 300, textAlign: "center" }}>{this.state.error.message}</div>
+        <div style={{ width: "100%", height: "100%", display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", background: "var(--tv-bg)", gap: 10 }}>
+          <div style={{ fontSize: 12, color: "var(--tv-text3)" }}>Chart render error</div>
+          <div style={{ fontSize: 10, color: "var(--tv-text2)", maxWidth: 300, textAlign: "center" }}>{this.state.error.message}</div>
         </div>
       );
     }
@@ -21,7 +21,7 @@ class ChartErrorBoundary extends React.Component {
 const money = (v) => (v == null || Number.isNaN(Number(v)) ? "—" : `₹${Number(v).toLocaleString("en-IN", { minimumFractionDigits: 1, maximumFractionDigits: 2 })}`);
 const pct = (v) => (v == null || Number.isNaN(Number(v)) ? "—" : `${Number(v).toFixed(3)}%`);
 
-export default function CandlestickChart({ chartData, ticker, metrics, changePct }) {
+export default function CandlestickChart({ chartData, ticker, metrics, changePct, theme = 'dark' }) {
   const containerRef = useRef(null);
   const chartRef     = useRef(null);
 
@@ -29,11 +29,12 @@ export default function CandlestickChart({ chartData, ticker, metrics, changePct
     if (!containerRef.current || !chartData || chartData.length === 0) return;
     if (chartRef.current) { chartRef.current.remove(); chartRef.current = null; }
 
-    // ── Colors matching TradingView exactly ──
-    const BG          = "#000000";
-    const GRID        = "#111111";
-    const AXIS_TEXT   = "#4e5460";
-    const AXIS_BORDER = "#1c1c1c";
+    // ── Dynamic Colors based on theme ──
+    const BG          = theme === 'light' ? '#ffffff' : '#000000';
+    const GRID        = theme === 'light' ? '#e0e3eb' : '#111111';
+    const AXIS_TEXT   = theme === 'light' ? '#787b86' : '#4e5460';
+    const AXIS_BORDER = theme === 'light' ? '#e0e3eb' : '#1c1c1c';
+    const CROSSHAIR   = theme === 'light' ? '#b2b5be' : '#363a45';
 
     const chart = createChart(containerRef.current, {
       layout: {
@@ -48,8 +49,8 @@ export default function CandlestickChart({ chartData, ticker, metrics, changePct
       },
       crosshair: {
         mode: 1,
-        vertLine: { color: "#363a45", labelBackgroundColor: "#1a1d24", width: 1, style: 2 },
-        horzLine: { color: "#363a45", labelBackgroundColor: "#1a1d24", width: 1, style: 2 },
+        vertLine: { color: CROSSHAIR, labelBackgroundColor: theme === 'light' ? '#131722' : '#1a1d24', width: 1, style: 2 },
+        horzLine: { color: CROSSHAIR, labelBackgroundColor: theme === 'light' ? '#131722' : '#1a1d24', width: 1, style: 2 },
       },
       rightPriceScale: {
         borderColor:    AXIS_BORDER,
@@ -191,11 +192,11 @@ export default function CandlestickChart({ chartData, ticker, metrics, changePct
       ro.disconnect();
       if (chartRef.current) { chartRef.current.remove(); chartRef.current = null; }
     };
-  }, [chartData, ticker]);
+  }, [chartData, ticker, theme]);
   return (
     <ChartErrorBoundary>
-      <div style={{ width: "100%", height: "100%", background: "#000", position: "relative" }}>
-        <div ref={containerRef} style={{ width: "100%", height: "100%", background: "#000" }} />
+      <div style={{ width: "100%", height: "100%", background: "var(--tv-bg)", position: "relative" }}>
+        <div ref={containerRef} style={{ width: "100%", height: "100%", background: "var(--tv-bg)" }} />
 
         {metrics && (
           <div style={{
@@ -210,7 +211,7 @@ export default function CandlestickChart({ chartData, ticker, metrics, changePct
             flexWrap: "wrap",
             maxWidth: "80%",
           }}>
-            <span style={{ fontSize: 20, fontWeight: 700, fontFamily: "monospace", color: "#e0e0e0" }}>
+            <span style={{ fontSize: 20, fontWeight: 700, fontFamily: "monospace", color: "var(--tv-text)" }}>
               {money(metrics.current_price)}
             </span>
 
@@ -224,16 +225,18 @@ export default function CandlestickChart({ chartData, ticker, metrics, changePct
             </span>
 
             {[
+              ["O", money(chartData?.[chartData?.length - 1]?.open)],
               ["H", money(metrics.resistance)],
               ["L", money(metrics.support)],
+              ["C", money(chartData?.[chartData?.length - 1]?.close)],
               ["RSI", metrics.rsi?.toFixed?.(1) ?? "—"],
               ["ATR%", pct(metrics.volatility_atr_pct)],
               ["SMA20", money(metrics.sma_20)],
               ["SMA50", money(metrics.sma_50)],
             ].map(([label, value]) => (
               <div key={label} style={{ display: "flex", alignItems: "center", gap: 5 }}>
-                <span style={{ fontSize: 11, color: "#6b7280", fontWeight: 600 }}>{label}</span>
-                <span style={{ fontSize: 12, color: "#c9ccd4", fontFamily: "monospace", fontWeight: 600 }}>{value}</span>
+                <span style={{ fontSize: 11, color: "var(--tv-text2)", fontWeight: 600 }}>{label}</span>
+                <span style={{ fontSize: 12, color: "var(--tv-text)", fontFamily: "monospace", fontWeight: 600 }}>{value}</span>
               </div>
             ))}
           </div>

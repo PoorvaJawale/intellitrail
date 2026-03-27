@@ -16,6 +16,19 @@
   --tv-blue:    #2962ff;    /* accent */
 }
 
+:root.light {
+  --tv-bg:      #ffffff;    /* pure white */
+  --tv-bg2:     #f4f5f8;    /* panels */
+  --tv-bg3:     #e5e7eb;    /* hover/active */
+  --tv-border:  #d1d5db;    /* subtle borders */
+  --tv-text:    #111827;    /* primary text */
+  --tv-text2:   #4b5563;    /* secondary */
+  --tv-text3:   #9ca3af;    /* muted */
+  --tv-up:      #089981;    /* TradingView teal */
+  --tv-down:    #F23645;    /* TradingView red */
+  --tv-blue:    #2962ff;    /* accent */
+}
+
 * { box-sizing: border-box; margin: 0; padding: 0; }
 
 html, body, #root {
@@ -25,19 +38,20 @@ html, body, #root {
 
 body {
   font-family: -apple-system, BlinkMacSystemFont, 'Trebuchet MS', Roboto, Ubuntu, sans-serif;
-  background: #000000;
+  background: var(--tv-bg);
   color: var(--tv-text);
   font-size: 12px;
   -webkit-font-smoothing: antialiased;
+  transition: background 0.3s ease, color 0.3s ease;
 }
 
 ::-webkit-scrollbar { width: 3px; height: 3px; }
-::-webkit-scrollbar-track { background: #000; }
-::-webkit-scrollbar-thumb { background: #1c1c1c; border-radius: 2px; }
+::-webkit-scrollbar-track { background: var(--tv-bg); }
+::-webkit-scrollbar-thumb { background: var(--tv-border); border-radius: 2px; }
 
-input, select, button { font-family: inherit; font-size: 12px; }
-input  { background: #000; color: var(--tv-text); border: 1px solid var(--tv-border); outline: none; }
-select { background: #000; color: var(--tv-text); border: 1px solid var(--tv-border); outline: none; }
+input, select, button { font-family: inherit; font-size: 12px; transition: background 0.3s ease, color 0.3s ease, border-color 0.3s ease; }
+input  { background: var(--tv-bg); color: var(--tv-text); border: 1px solid var(--tv-border); outline: none; }
+select { background: var(--tv-bg); color: var(--tv-text); border: 1px solid var(--tv-border); outline: none; }
 input[type=range] { accent-color: var(--tv-text3); }
 
 .tv-up   { color: var(--tv-up);   }

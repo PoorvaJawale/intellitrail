@@ -9,9 +9,9 @@ const TF_LIMIT = { "1m": 120, "5m": 200, "15m": 200, "1H": 300, "4H": 400, "1D":
 const smallPill = (active) => ({
   padding: "3px 9px", border: "1px solid", borderRadius: 16, cursor: "pointer",
   fontSize: 11, fontWeight: active ? 600 : 400,
-  background: active ? "#e0e0e0" : "transparent",
-  color: active ? "#000" : "#6b7280",
-  borderColor: active ? "#e0e0e0" : "#2a2a2a",
+  background: active ? "var(--tv-text)" : "transparent",
+  color: active ? "var(--tv-bg)" : "var(--tv-text2)",
+  borderColor: active ? "var(--tv-text)" : "var(--tv-border)",
   transition: "all .12s",
 });
 
@@ -20,8 +20,8 @@ const SearchIcon = () => <svg width="18" height="18" viewBox="0 0 24 24" fill="n
 const ClearIcon  = () => <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>;
 const SymbolIcon = ({ ticker }) => (
   <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-    <rect width="24" height="24" rx="12" fill="#2a2b2e" />
-    <text x="12" y="16.5" fontSize="12" fontWeight="700" fill="#e0e0e0" textAnchor="middle">{ticker.charAt(0)}</text>
+    <rect width="24" height="24" rx="12" fill="var(--tv-bg3)" />
+    <text x="12" y="16.5" fontSize="12" fontWeight="700" fill="var(--tv-text)" textAnchor="middle">{ticker.charAt(0)}</text>
   </svg>
 );
 const IndiaFlag = () => (
@@ -33,7 +33,7 @@ const IndiaFlag = () => (
   </svg>
 );
 const PinIcon = ({ pinned }) => (
-  <svg width="15" height="15" viewBox="0 0 24 24" fill={pinned ? "#e0e0e0" : "none"} stroke={pinned ? "#e0e0e0" : "#6b7280"} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+  <svg width="15" height="15" viewBox="0 0 24 24" fill={pinned ? "var(--tv-text)" : "none"} stroke={pinned ? "var(--tv-text)" : "var(--tv-text2)"} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
     <line x1="12" y1="17" x2="12" y2="22"></line>
     <path d="M5 17h14v-1.76a2 2 0 0 0-1.11-1.79l-1.78-.9A2 2 0 0 1 15 10.76v-6A2 2 0 0 0 13 2.76h-2a2 2 0 0 0-2 2v6a2 2 0 0 1-1.11 1.79l-1.78.9A2 2 0 0 0 5 15.24Z"></path>
   </svg>
@@ -73,10 +73,10 @@ function SymbolSearchModal({ availableStocks, watchlist, value, onChange, onTogg
   return (
     <>
       <button onClick={() => { setOpen(true); setQuery(""); }} style={{
-        padding: "6px 16px", background: "transparent", border: "1px solid #2a2a2a",
-        borderRadius: 20, cursor: "pointer", color: "#e0e0e0", fontSize: 14, fontWeight: 700,
+        padding: "6px 16px", background: "transparent", border: "1px solid var(--tv-border)",
+        borderRadius: 20, cursor: "pointer", color: "var(--tv-text)", fontSize: 14, fontWeight: 700,
         display: "flex", alignItems: "center", transition: "background 0.2s"
-      }} onMouseOver={e => e.currentTarget.style.background = "#1a1a1a"} onMouseOut={e => e.currentTarget.style.background = "transparent"}>
+      }} onMouseOver={e => e.currentTarget.style.background = "var(--tv-bg3)"} onMouseOut={e => e.currentTarget.style.background = "transparent"}>
         {value || "Select symbol"}
       </button>
 
@@ -87,32 +87,32 @@ function SymbolSearchModal({ availableStocks, watchlist, value, onChange, onTogg
           zIndex: 9999, display: "flex", justifyContent: "center", alignItems: "center"
         }} onMouseDown={(e) => { if (e.target === e.currentTarget) setOpen(false); }}>
           <div style={{
-            width: "90%", maxWidth: 620, background: "#1A1A1A", borderRadius: 8,
+            width: "90%", maxWidth: 620, background: "var(--tv-bg)", borderRadius: 8, border: "1px solid var(--tv-border)",
             boxShadow: "0 10px 30px rgba(0,0,0,0.8)", display: "flex", flexDirection: "column",
             overflow: "hidden", maxHeight: "60vh"
           }}>
             {/* Header / Search */}
-            <div style={{ padding: "12px 16px 0" }}>
+            <div style={{ padding: "12px 16px 0", background: "var(--tv-bg)" }}>
               <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 12 }}>
-                <div style={{ fontSize: 16, fontWeight: 600, color: "#e0e0e0" }}>Symbol Search</div>
-                <button onClick={() => setOpen(false)} style={{ background: "none", border: "none", color: "#6b7280", cursor: "pointer", fontSize: 18 }}>
+                <div style={{ fontSize: 16, fontWeight: 600, color: "var(--tv-text)" }}>Symbol Search</div>
+                <button onClick={() => setOpen(false)} style={{ background: "none", border: "none", color: "var(--tv-text2)", cursor: "pointer", fontSize: 18 }}>
                   <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
                 </button>
               </div>
               <div style={{ position: "relative", marginBottom: 12 }}>
-                <span style={{ position: "absolute", left: 12, top: "50%", transform: "translateY(-50%)", color: "#6b7280", display: "flex" }}>
+                <span style={{ position: "absolute", left: 12, top: "50%", transform: "translateY(-50%)", color: "var(--tv-text2)", display: "flex" }}>
                   <SearchIcon />
                 </span>
                 <input autoFocus value={query} onChange={e => setQuery(e.target.value)}
                   placeholder="Search"
                   style={{
-                    width: "100%", background: "#1A1A1A", border: "1px solid #363a45", borderRadius: 8,
-                    padding: "10px 40px", color: "#e0e0e0", fontSize: 14, outline: "none", boxSizing: "border-box",
+                    width: "100%", background: "var(--tv-bg2)", border: "1px solid var(--tv-border)", borderRadius: 8,
+                    padding: "10px 40px", color: "var(--tv-text)", fontSize: 14, outline: "none", boxSizing: "border-box",
                     transition: "border 0.2s"
-                  }} onFocus={e => e.target.style.border = "1px solid #e0e0e0"} onBlur={e => e.target.style.border = "1px solid #363a45"} />
+                  }} onFocus={e => e.target.style.borderColor = "var(--tv-text)"} onBlur={e => e.target.style.borderColor = "var(--tv-border)"} />
                 
                 {query && (
-                  <button onClick={() => setQuery("")} style={{ position: "absolute", right: 16, top: "50%", transform: "translateY(-50%)", background: "#e0e0e0", border: "none", color: "#131722", borderRadius: "50%", padding: 2, display: "flex", cursor: "pointer" }}>
+                  <button onClick={() => setQuery("")} style={{ position: "absolute", right: 16, top: "50%", transform: "translateY(-50%)", background: "var(--tv-text)", border: "none", color: "var(--tv-bg)", borderRadius: "50%", padding: 2, display: "flex", cursor: "pointer" }}>
                     <ClearIcon />
                   </button>
                 )}
@@ -120,27 +120,27 @@ function SymbolSearchModal({ availableStocks, watchlist, value, onChange, onTogg
             </div>
 
             {/* List */}
-            <div style={{ overflowY: "auto", flex: 1 }}>
+            <div style={{ overflowY: "auto", flex: 1, background: "var(--tv-bg)" }}>
               {sortedList.map((w, index) => {
                 const isMatch = !query || w.ticker.toLowerCase().includes(query.toLowerCase());
                 return (
                   <button key={w.ticker} onClick={() => { if(isMatch) { onChange(w.ticker); setOpen(false); } }} style={{
                     width: "100%", display: "flex", alignItems: "center", justifyContent: "space-between",
-                    padding: "8px 16px", background: "transparent", borderTop: "1px solid transparent", borderBottom: "1px solid #2a2a2a", 
+                    padding: "8px 16px", background: "transparent", borderTop: "1px solid transparent", borderBottom: "1px solid var(--tv-border)", 
                     cursor: isMatch ? "pointer" : "default", opacity: isMatch ? 1 : 0.25,
                     transition: "none", textAlign: "left", outline: "none", position: "relative"
-                  }} onMouseOver={e => { if(isMatch) { e.currentTarget.style.background = "#2a2b2e"; e.currentTarget.style.outline = "1px solid #e0e0e0"; e.currentTarget.style.zIndex=1; } }} onMouseOut={e => { e.currentTarget.style.background = "transparent"; e.currentTarget.style.outline = "none"; e.currentTarget.style.zIndex=0; }}>
+                  }} onMouseOver={e => { if(isMatch) { e.currentTarget.style.background = "var(--tv-bg3)"; e.currentTarget.style.zIndex=1; } }} onMouseOut={e => { e.currentTarget.style.background = "transparent"; e.currentTarget.style.zIndex=0; }}>
                     
                     {/* Left Side: Icon + Ticker + Name */}
                     <div style={{ display: "flex", alignItems: "center", gap: 16 }}>
                       <SymbolIcon ticker={w.ticker} />
-                      <div style={{ color: "#e0e0e0", fontSize: 14, fontWeight: 600, width: 90 }}>{w.ticker}</div>
-                      <div style={{ color: "#8a8d98", fontSize: 13 }}>{w.ticker} Corporation</div>
+                      <div style={{ color: "var(--tv-text)", fontSize: 14, fontWeight: 600, width: 90 }}>{w.ticker}</div>
+                      <div style={{ color: "var(--tv-text2)", fontSize: 13 }}>{w.ticker} Corporation</div>
                     </div>
 
                     {/* Right Side: Type + Pin + Dataset Info */}
                     <div style={{ display: "flex", alignItems: "center", gap: 16 }}>
-                      <div style={{ fontSize: 12, color: "#6b7280" }}>stock</div>
+                      <div style={{ fontSize: 12, color: "var(--tv-text3)" }}>stock</div>
                       <button onClick={(e) => { e.stopPropagation(); onTogglePin(w.ticker); }} style={{ background: "none", border: "none", cursor: "pointer", display: "flex", alignItems: "center", padding: 4 }}>
                         <PinIcon pinned={w.is_pinned} />
                       </button>
@@ -149,7 +149,7 @@ function SymbolSearchModal({ availableStocks, watchlist, value, onChange, onTogg
                         <div style={{ fontSize: 13, fontWeight: 600, color: w.trend === "up" ? "#089981" : "#F23645" }}>
                           {w.pct > 0 ? "+" : ""}{w.pct.toFixed(2)}%
                         </div>
-                        <div style={{ fontSize: 11, color: "#6b7280", fontFamily: "monospace" }}>
+                        <div style={{ fontSize: 11, color: "var(--tv-text3)", fontFamily: "monospace" }}>
                           ₹{w.price.toLocaleString("en-IN", { minimumFractionDigits: 1 })}
                         </div>
                       </div>
@@ -170,21 +170,21 @@ function RsiGauge({ rsi, label }) {
   const pct = Math.min(100, Math.max(0, rsi));
   const color = rsi < 30 ? "#089981" : rsi > 70 ? "#F23645" : "#f39c12";
   return (
-    <div style={{ padding: "10px 14px", background: "#0a0a0a", border: "1px solid #1c1c1c", borderRadius: 8 }}>
-      <div style={{ fontSize: 9, color: "#3d404a", textTransform: "uppercase", letterSpacing: "0.1em", marginBottom: 6 }}>RSI (14)</div>
+    <div style={{ padding: "10px 14px", background: "var(--tv-bg)", border: "1px solid var(--tv-border)", borderRadius: 8 }}>
+      <div style={{ fontSize: 9, color: "var(--tv-text3)", textTransform: "uppercase", letterSpacing: "0.1em", marginBottom: 6 }}>RSI (14)</div>
       <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 6 }}>
         <div style={{ fontSize: 20, fontWeight: 700, fontFamily: "monospace", color }}>{rsi?.toFixed(1)}</div>
         <span style={{ padding: "2px 8px", borderRadius: 12, fontSize: 10, fontWeight: 700,
           background: color + "20", border: `1px solid ${color}50`, color }}>{label}</span>
       </div>
-      <div style={{ height: 4, background: "#1c1c1c", borderRadius: 2, position: "relative" }}>
+      <div style={{ height: 4, background: "var(--tv-border)", borderRadius: 2, position: "relative" }}>
         {/* zones */}
         <div style={{ position: "absolute", left: "30%", width: "40%", height: "100%", background: "rgba(243,156,18,0.15)" }} />
         <div style={{ position: "absolute", left: 0, width: `${pct}%`, height: "100%", background: color, borderRadius: 2 }} />
-        <div style={{ position: "absolute", left: "30%", top: -2, width: 1, height: 8, background: "#3d404a" }} />
-        <div style={{ position: "absolute", left: "70%", top: -2, width: 1, height: 8, background: "#3d404a" }} />
+        <div style={{ position: "absolute", left: "30%", top: -2, width: 1, height: 8, background: "var(--tv-text3)" }} />
+        <div style={{ position: "absolute", left: "70%", top: -2, width: 1, height: 8, background: "var(--tv-text3)" }} />
       </div>
-      <div style={{ display: "flex", justifyContent: "space-between", fontSize: 9, color: "#3d404a", marginTop: 4 }}>
+      <div style={{ display: "flex", justifyContent: "space-between", fontSize: 9, color: "var(--tv-text3)", marginTop: 4 }}>
         <span>0 Oversold</span><span>Neutral</span><span>Overbought 100</span>
       </div>
     </div>
@@ -194,15 +194,15 @@ function RsiGauge({ rsi, label }) {
 /* ── Metric tile ── */
 function Tile({ label, value, sub, color, mono }) {
   return (
-    <div style={{ padding: "10px 14px", background: "#0a0a0a", border: "1px solid #1c1c1c", borderRadius: 8 }}>
-      <div style={{ fontSize: 9, color: "#3d404a", textTransform: "uppercase", letterSpacing: "0.1em", marginBottom: 5 }}>{label}</div>
-      <div style={{ fontSize: 16, fontWeight: 700, color: color || "#e0e0e0", fontFamily: mono ? "monospace" : undefined }}>{value}</div>
-      {sub && <div style={{ fontSize: 10, color: "#6b7280", marginTop: 3 }}>{sub}</div>}
+    <div style={{ padding: "10px 14px", background: "var(--tv-bg)", border: "1px solid var(--tv-border)", borderRadius: 8 }}>
+      <div style={{ fontSize: 9, color: "var(--tv-text3)", textTransform: "uppercase", letterSpacing: "0.1em", marginBottom: 5 }}>{label}</div>
+      <div style={{ fontSize: 16, fontWeight: 700, color: color || "var(--tv-text)", fontFamily: mono ? "monospace" : undefined }}>{value}</div>
+      {sub && <div style={{ fontSize: 10, color: "var(--tv-text2)", marginTop: 3 }}>{sub}</div>}
     </div>
   );
 }
 
-export default function AnalyticsView({ availableStocks, activeStock, setActiveStock, watchlist, onTogglePin }) {
+export default function AnalyticsView({ availableStocks, activeStock, setActiveStock, watchlist, onTogglePin, theme }) {
   const [tf, setTf] = useState("1m");
   const [stockData, setStockData] = useState(null);
   const [analysis, setAnalysis] = useState(null);
@@ -251,18 +251,18 @@ export default function AnalyticsView({ availableStocks, activeStock, setActiveS
   const bullish = m?.trend === "Bullish";
 
   return (
-    <div style={{ display: "flex", flexDirection: "column", height: "100%", overflow: "hidden", background: "#000" }}>
+    <div style={{ display: "flex", flexDirection: "column", height: "100%", overflow: "hidden", background: "var(--tv-bg)" }}>
 
       {/* ── TOOLBAR ── */}
-      <div style={{ display: "flex", alignItems: "center", gap: 6, padding: "0 12px", height: 38, flexShrink: 0, borderBottom: "1px solid #1c1c1c", background: "#050505" }}>
+      <div style={{ display: "flex", alignItems: "center", gap: 6, padding: "0 12px", height: 38, flexShrink: 0, borderBottom: "1px solid var(--tv-border)", background: "var(--tv-bg2)" }}>
         <SymbolSearchModal availableStocks={availableStocks} watchlist={watchlist} value={activeStock} onChange={setActiveStock} onTogglePin={onTogglePin} />
-        <div style={{ width: 1, height: 16, background: "#1c1c1c", margin: "0 6px", flexShrink: 0 }} />
+        <div style={{ width: 1, height: 16, background: "var(--tv-border)", margin: "0 6px", flexShrink: 0 }} />
         <div style={{ display: "flex", gap: 3 }}>
           {TF.map(t => (
             <button key={t} onClick={() => setTf(t)} style={smallPill(tf === t)}>{t}</button>
           ))}
         </div>
-        <div style={{ width: 1, height: 16, background: "#1c1c1c", margin: "0 6px", flexShrink: 0 }} />
+        <div style={{ width: 1, height: 16, background: "var(--tv-border)", margin: "0 6px", flexShrink: 0 }} />
         <div style={{ display: "flex", gap: 10, alignItems: "center" }}>
           {[["▲ Bull", "#089981"], ["▼ Bear", "#F23645"], ["SMA20", "#2962ff"], ["SMA50", "#f39c12"], ["BB", "#7864c8"]].map(([label, color]) => (
             <span key={label} style={{ fontSize: 10, color, opacity: 0.8 }}>{label}</span>
@@ -276,33 +276,33 @@ export default function AnalyticsView({ availableStocks, activeStock, setActiveS
         <div style={{ flex: 1, overflow: "hidden", minWidth: 0, display: "flex", flexDirection: "column" }}>
           <div style={{ flex: 1, minHeight: 0, overflow: "hidden" }}>
             {loading ? (
-              <div style={{ height: "100%", display: "flex", alignItems: "center", justifyContent: "center", color: "#3d404a", fontSize: 12 }}>
+              <div style={{ height: "100%", display: "flex", alignItems: "center", justifyContent: "center", color: "var(--tv-text3)", fontSize: 12 }}>
                 Loading {activeStock}…
               </div>
             ) : stockData?.chart_data ? (
-              <CandlestickChart chartData={stockData.chart_data} ticker={activeStock} metrics={m} changePct={currentWl?.pct} />
+              <CandlestickChart chartData={stockData.chart_data} ticker={activeStock} metrics={m} changePct={currentWl?.pct} theme={theme} />
             ) : (
-              <div style={{ height: "100%", display: "flex", alignItems: "center", justifyContent: "center", color: "#3d404a", fontSize: 12 }}>Select a symbol</div>
+              <div style={{ height: "100%", display: "flex", alignItems: "center", justifyContent: "center", color: "var(--tv-text3)", fontSize: 12 }}>Select a symbol</div>
             )}
           </div>
         </div>
 
         {/* Right Panel */}
-        <div style={{ width: 340, flexShrink: 0, borderLeft: "1px solid #1c1c1c", background: "#050505", display: "flex", flexDirection: "column" }}>
+        <div style={{ width: 340, flexShrink: 0, borderLeft: "1px solid var(--tv-border)", background: "var(--tv-bg2)", display: "flex", flexDirection: "column" }}>
           
           {/* Tabs header */}
-          <div style={{ padding: "10px 12px", borderBottom: "1px solid #1c1c1c" }}>
-            <div style={{ display: "flex", background: "#2a2b2e", borderRadius: 6, padding: 3 }}>
+          <div style={{ padding: "10px 12px", borderBottom: "1px solid var(--tv-border)" }}>
+            <div style={{ display: "flex", background: "var(--tv-bg3)", borderRadius: 6, padding: 3 }}>
               <button onClick={() => setRightTab("watchlist")} style={{
                 flex: 1, padding: "6px 0", cursor: "pointer", fontSize: 13, fontWeight: 600,
-                background: rightTab === "watchlist" ? "#fff" : "transparent",
-                border: "none", borderRadius: 4, color: rightTab === "watchlist" ? "#000" : "#8a8d98",
+                background: rightTab === "watchlist" ? "var(--tv-text)" : "transparent",
+                border: "none", borderRadius: 4, color: rightTab === "watchlist" ? "var(--tv-bg)" : "var(--tv-text2)",
                 transition: "all 0.15s", outline: "none"
               }}>Watchlist</button>
               <button onClick={() => setRightTab("analysis")} style={{
                 flex: 1, padding: "6px 0", cursor: "pointer", fontSize: 13, fontWeight: 600,
-                background: rightTab === "analysis" ? "#fff" : "transparent",
-                border: "none", borderRadius: 4, color: rightTab === "analysis" ? "#000" : "#8a8d98",
+                background: rightTab === "analysis" ? "var(--tv-text)" : "transparent",
+                border: "none", borderRadius: 4, color: rightTab === "analysis" ? "var(--tv-bg)" : "var(--tv-text2)",
                 transition: "all 0.15s", outline: "none"
               }}>Analysis</button>
             </div>
@@ -314,7 +314,7 @@ export default function AnalyticsView({ availableStocks, activeStock, setActiveS
             {rightTab === "analysis" && an && (
               <div style={{ padding: 12, flex: 1 }}>
                 {/* Sentiment Header */}
-                <div style={{ fontSize: 9, color: "#3d404a", textTransform: "uppercase", letterSpacing: "0.12em", fontWeight: 700, marginBottom: 8 }}>
+                <div style={{ fontSize: 9, color: "var(--tv-text3)", textTransform: "uppercase", letterSpacing: "0.12em", fontWeight: 700, marginBottom: 8 }}>
                   Market Sentiment
                 </div>
                 <div style={{ display: "flex", flexDirection: "column", gap: 10, marginBottom: 16 }}>
@@ -326,7 +326,7 @@ export default function AnalyticsView({ availableStocks, activeStock, setActiveS
                 </div>
 
                 {/* Technical Indicators Header */}
-                <div style={{ fontSize: 9, color: "#3d404a", textTransform: "uppercase", letterSpacing: "0.12em", fontWeight: 700, marginBottom: 8 }}>
+                <div style={{ fontSize: 9, color: "var(--tv-text3)", textTransform: "uppercase", letterSpacing: "0.12em", fontWeight: 700, marginBottom: 8 }}>
                   Technical Indicators
                 </div>
                 <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 8, marginBottom: 16 }}>
@@ -340,16 +340,16 @@ export default function AnalyticsView({ availableStocks, activeStock, setActiveS
                 </div>
                 
                 {/* AI Prediction Header */}
-                <div style={{ fontSize: 9, color: "#3d404a", textTransform: "uppercase", letterSpacing: "0.12em", fontWeight: 700, marginBottom: 8 }}>
+                <div style={{ fontSize: 9, color: "var(--tv-text3)", textTransform: "uppercase", letterSpacing: "0.12em", fontWeight: 700, marginBottom: 8 }}>
                   AI Engine Evaluation
                 </div>
-                <div style={{ padding: "12px 14px", background: "#0a0a0a", border: "1px solid #1c1c1c", borderRadius: 8, display: "flex", alignItems: "center", justifyContent: "space-between" }}>
+                <div style={{ padding: "12px 14px", background: "var(--tv-bg)", border: "1px solid var(--tv-border)", borderRadius: 8, display: "flex", alignItems: "center", justifyContent: "space-between" }}>
                   <div>
-                    <div style={{ fontSize: 9, color: "#3d404a", textTransform: "uppercase", letterSpacing: "0.1em", marginBottom: 4 }}>Forecasted Next Close</div>
+                    <div style={{ fontSize: 9, color: "var(--tv-text3)", textTransform: "uppercase", letterSpacing: "0.1em", marginBottom: 4 }}>Forecasted Next Close</div>
                     <div style={{ fontSize: 20, fontWeight: 700, fontFamily: "monospace", color: an.ai.direction === "UP" ? "#089981" : "#F23645" }}>
                       ₹{an.ai.prediction?.toLocaleString("en-IN", { minimumFractionDigits: 2 })}
                     </div>
-                    <div style={{ fontSize: 10, color: "#6b7280", marginTop: 2 }}>
+                    <div style={{ fontSize: 10, color: "var(--tv-text2)", marginTop: 2 }}>
                       {an.ai.direction === "UP" ? "▲" : "▼"} Expected {an.ai.confidence?.toFixed(1)}% Delta
                     </div>
                   </div>
@@ -366,19 +366,19 @@ export default function AnalyticsView({ availableStocks, activeStock, setActiveS
             {/* ── WATCHLIST ── */}
             {rightTab === "watchlist" && (
               <div style={{ flex: 1, display: "flex", flexDirection: "column" }}>
-                <div style={{ display: "grid", gridTemplateColumns: "1fr auto", padding: "6px 14px", fontSize: 9, color: "#3d404a", borderBottom: "1px solid #1c1c1c", textTransform: "uppercase", fontWeight: 700, letterSpacing: "0.1em" }}><span>Symbol</span><span>Last Price</span></div>
+                <div style={{ display: "grid", gridTemplateColumns: "1fr auto", padding: "6px 14px", fontSize: 9, color: "var(--tv-text3)", borderBottom: "1px solid var(--tv-border)", textTransform: "uppercase", fontWeight: 700, letterSpacing: "0.1em" }}><span>Symbol</span><span>Last Price</span></div>
                 <div style={{ flex: 1, overflowY: "auto" }}>
                   {watchlist.filter(w => w.is_pinned).map(w => (
                     <button key={w.ticker} onClick={() => setActiveStock(w.ticker)} style={{
                       display: "grid", gridTemplateColumns: "1fr auto", width: "100%", padding: "10px 14px",
-                      background: activeStock === w.ticker ? "#111" : "transparent", border: "none", borderBottom: "1px solid #111", cursor: "pointer"
+                      background: activeStock === w.ticker ? "var(--tv-bg3)" : "transparent", border: "none", borderBottom: "1px solid var(--tv-border)", cursor: "pointer"
                     }}>
                       <div>
-                        <div style={{ fontSize: 13, fontWeight: 600, color: activeStock === w.ticker ? "#2962ff" : "#e0e0e0", textAlign: "left" }}>{w.ticker}</div>
-                        <div style={{ fontSize: 11, color: "#6b7280", textAlign: "left", marginTop: 2 }}>Stock</div>
+                        <div style={{ fontSize: 13, fontWeight: 600, color: activeStock === w.ticker ? "#2962ff" : "var(--tv-text)", textAlign: "left" }}>{w.ticker}</div>
+                        <div style={{ fontSize: 11, color: "var(--tv-text2)", textAlign: "left", marginTop: 2 }}>Stock</div>
                       </div>
                       <div style={{ textAlign: "right", alignSelf: "center" }}>
-                        <div style={{ fontSize: 12, fontFamily: "monospace", color: "#e0e0e0", fontWeight: 500 }}>₹{w.price.toLocaleString("en-IN")}</div>
+                        <div style={{ fontSize: 12, fontFamily: "monospace", color: "var(--tv-text)", fontWeight: 500 }}>₹{w.price.toLocaleString("en-IN")}</div>
                         <div style={{ fontSize: 11, fontWeight: 600, color: w.trend === "up" ? "#089981" : "#F23645", marginTop: 2 }}>
                           {w.pct > 0 ? "+" : ""}{w.pct.toFixed(2)}%
                         </div>
@@ -391,14 +391,14 @@ export default function AnalyticsView({ availableStocks, activeStock, setActiveS
 
             {/* ── POSITIONS ── */}
             {portfolio.active_bots.length > 0 && <>
-              <div style={{ padding: "6px 14px", borderTop: "1px solid #1c1c1c", borderBottom: "1px solid #1c1c1c", fontSize: 9, color: "#3d404a", textTransform: "uppercase", letterSpacing: "0.1em", fontWeight: 700 }}>
+              <div style={{ padding: "6px 14px", borderTop: "1px solid var(--tv-border)", borderBottom: "1px solid var(--tv-border)", fontSize: 9, color: "var(--tv-text3)", textTransform: "uppercase", letterSpacing: "0.1em", fontWeight: 700 }}>
                 Positions ({portfolio.active_bots.length})
               </div>
               <div style={{ maxHeight: 160, overflowY: "auto", flexShrink: 0 }}>
                 {portfolio.active_bots.map(bot => (
-                  <div key={bot.id} style={{ padding: "8px 14px", borderBottom: "1px solid #111", display: "flex", justifyContent: "space-between" }}>
+                  <div key={bot.id} style={{ padding: "8px 14px", borderBottom: "1px solid var(--tv-border)", display: "flex", justifyContent: "space-between" }}>
                     <div>
-                      <div style={{ fontSize: 12, fontWeight: 700, color: "#e0e0e0" }}>{bot.ticker}</div>
+                      <div style={{ fontSize: 12, fontWeight: 700, color: "var(--tv-text)" }}>{bot.ticker}</div>
                       <div style={{ fontSize: 11, color: bot.strat.includes("Buy") ? "#089981" : "#F23645", marginTop: 2 }}>{bot.strat.includes("Buy") ? "LONG" : "SHORT"} · {bot.qty}</div>
                     </div>
                     <div style={{ textAlign: "right" }}>
@@ -414,31 +414,31 @@ export default function AnalyticsView({ availableStocks, activeStock, setActiveS
       </div>
 
       {/* ── ORDER STRIP ── */}
-      <div style={{ flexShrink: 0, borderTop: "1px solid #1c1c1c", background: "#050505", display: "flex", alignItems: "center", gap: 14, padding: "7px 14px", height: 54 }}>
-        <div style={{ display: "flex", gap: 3, background: "#111", padding: "3px", borderRadius: 22, border: "1px solid #1c1c1c", flexShrink: 0 }}>
+      <div style={{ flexShrink: 0, borderTop: "1px solid var(--tv-border)", background: "var(--tv-bg2)", display: "flex", alignItems: "center", gap: 14, padding: "7px 14px", height: 54 }}>
+        <div style={{ display: "flex", gap: 3, background: "var(--tv-bg3)", padding: "3px", borderRadius: 22, border: "1px solid var(--tv-border)", flexShrink: 0 }}>
           {["buy", "sell"].map(s => (
             <button key={s} onClick={() => setSide(s)} style={{
               padding: "5px 14px", borderRadius: 18, border: "none", cursor: "pointer", fontSize: 12, fontWeight: 700,
               background: side === s ? (s === "buy" ? "#089981" : "#F23645") : "transparent",
-              color: side === s ? "#fff" : "#6b7280", transition: "all .15s"
+              color: side === s ? "#fff" : "var(--tv-text2)", transition: "all .15s"
             }}>
               {s === "buy" ? "BUY" : "SELL"}
             </button>
           ))}
         </div>
         <div style={{ display: "flex", alignItems: "center", gap: 4, flexShrink: 0 }}>
-          <span style={{ fontSize: 9, color: "#3d404a", textTransform: "uppercase", letterSpacing: "0.1em" }}>Qty</span>
-          <button onClick={() => setQuantity(q => Math.max(1, q - 1))} style={{ width: 22, height: 22, background: "transparent", border: "1px solid #2a2a2a", color: "#c9ccd4", borderRadius: 6, cursor: "pointer" }}>−</button>
+          <span style={{ fontSize: 9, color: "var(--tv-text3)", textTransform: "uppercase", letterSpacing: "0.1em" }}>Qty</span>
+          <button onClick={() => setQuantity(q => Math.max(1, q - 1))} style={{ width: 22, height: 22, background: "transparent", border: "1px solid var(--tv-border)", color: "var(--tv-text)", borderRadius: 6, cursor: "pointer" }}>−</button>
           <input type="number" value={quantity} min={1} onChange={e => setQuantity(Math.max(1, parseInt(e.target.value) || 1))}
-            style={{ width: 48, height: 24, textAlign: "center", background: "transparent", border: "1px solid #2a2a2a", borderRadius: 6, color: "#e0e0e0", fontSize: 12 }} />
-          <button onClick={() => setQuantity(q => q + 1)} style={{ width: 22, height: 22, background: "transparent", border: "1px solid #2a2a2a", color: "#c9ccd4", borderRadius: 6, cursor: "pointer" }}>+</button>
+            style={{ width: 48, height: 24, textAlign: "center", background: "transparent", border: "1px solid var(--tv-border)", borderRadius: 6, color: "var(--tv-text)", fontSize: 12 }} />
+          <button onClick={() => setQuantity(q => q + 1)} style={{ width: 22, height: 22, background: "transparent", border: "1px solid var(--tv-border)", color: "var(--tv-text)", borderRadius: 6, cursor: "pointer" }}>+</button>
         </div>
         <div style={{ display: "flex", alignItems: "center", gap: 6, flexShrink: 0 }}>
-          <span style={{ fontSize: 9, color: "#3d404a", textTransform: "uppercase", letterSpacing: "0.1em" }}>Sim</span>
+          <span style={{ fontSize: 9, color: "var(--tv-text3)", textTransform: "uppercase", letterSpacing: "0.1em" }}>Sim</span>
           <input type="range" min={5} max={90} step={5} value={simDays} onChange={e => setSimDays(Number(e.target.value))} style={{ width: 80 }} />
-          <span style={{ fontSize: 11, color: "#6b7280", fontFamily: "monospace", minWidth: 28 }}>{simDays}d</span>
+          <span style={{ fontSize: 11, color: "var(--tv-text2)", fontFamily: "monospace", minWidth: 28 }}>{simDays}d</span>
         </div>
-        <span style={{ fontSize: 11, color: "#3d404a" }}>
+        <span style={{ fontSize: 11, color: "var(--tv-text3)" }}>
           Strategy: <span style={{ color: side === "buy" ? "#089981" : "#F23645", fontWeight: 600 }}>{side === "buy" ? "Auto-Scout (Buy)" : "Auto-Protect (Sell)"}</span>
         </span>
         <button onClick={exec} disabled={orderLoading} style={{
@@ -449,7 +449,7 @@ export default function AnalyticsView({ availableStocks, activeStock, setActiveS
           {orderLoading ? "Executing…" : side === "buy" ? "▲ Execute Buy" : "▼ Execute Sell"}
         </button>
         <div style={{ textAlign: "right", flexShrink: 0 }}>
-          <div style={{ fontSize: 9, color: "#3d404a", textTransform: "uppercase", letterSpacing: "0.1em" }}>Fleet P&amp;L</div>
+          <div style={{ fontSize: 9, color: "var(--tv-text3)", textTransform: "uppercase", letterSpacing: "0.1em" }}>Fleet P&amp;L</div>
           <div style={{ fontSize: 13, fontWeight: 700, fontFamily: "monospace", color: (portfolio.summary?.total_pnl || 0) >= 0 ? "#089981" : "#F23645" }}>
             ₹{(portfolio.summary?.total_pnl || 0).toFixed(0)}
           </div>
