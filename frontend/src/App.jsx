@@ -4,11 +4,23 @@ import StatsView from './components/StatsView';
 import AnalyticsView from './components/AnalyticsView';
 import PortfolioView from './components/PortfolioView';
 import LandingPage from './components/LandingPage';
+import SettingsView from './components/SettingsView';
+import AccountView from './components/AccountView';
+
+const getSystemTheme = () => {
+  if (typeof window === 'undefined' || !window.matchMedia) return 'dark';
+  return window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+};
 
 const NAV = [
   { id: 'stats',     label: 'Overview' },
   { id: 'analytics', label: 'Chart' },
   { id: 'portfolio', label: 'Portfolio' },
+];
+
+const BOTTOM_NAV = [
+  { id: 'settings', label: 'Settings' },
+  { id: 'account',  label: 'Account' },
 ];
 
 /* ── Inline styles ── */
@@ -36,20 +48,68 @@ export default function App() {
   const [appMode, setAppMode]     = useState(() => {
     return localStorage.getItem('isLoggedIn') === 'true' ? 'dashboard' : 'landing';
   });
-  const [theme, setTheme] = useState(() => localStorage.getItem('theme') || 'dark');
+  const [themeMode, setThemeMode] = useState(() => {
+    const persistedMode = localStorage.getItem('themeMode');
+    if (persistedMode === 'dark' || persistedMode === 'light' || persistedMode === 'auto') return persistedMode;
+
+    const legacyTheme = localStorage.getItem('theme');
+    if (legacyTheme === 'dark' || legacyTheme === 'light') return legacyTheme;
+    return 'auto';
+  });
+  const [theme, setTheme] = useState(() => {
+    const persistedMode = localStorage.getItem('themeMode');
+    if (persistedMode === 'dark' || persistedMode === 'light') return persistedMode;
+
+    const legacyTheme = localStorage.getItem('theme');
+    if (legacyTheme === 'dark' || legacyTheme === 'light') return legacyTheme;
+    return getSystemTheme();
+  });
+  const [language, setLanguage] = useState(() => localStorage.getItem('language') || 'en');
+  const [username, setUsername] = useState(() => localStorage.getItem('username') || '');
+  const [usernameDraft, setUsernameDraft] = useState('');
   const [tab, setTab]             = useState('stats');
   const [status, setStatus]       = useState(null);
   const [portfolio, setPortfolio] = useState({ summary:{}, active_bots:[] });
   const [watchlist, setWatchlist] = useState([]);
   const [activeStock, setActiveStock] = useState('');
 
-  const toggleTheme = () => setTheme(prev => prev === 'dark' ? 'light' : 'dark');
+  const toggleTheme = () => {
+    setThemeMode(prev => {
+      const current = prev === 'auto' ? getSystemTheme() : prev;
+      return current === 'dark' ? 'light' : 'dark';
+    });
+  };
 
   useEffect(() => {
-    if (theme === 'light') document.documentElement.classList.add('light');
-    else document.documentElement.classList.remove('light');
-    localStorage.setItem('theme', theme);
-  }, [theme]);
+    localStorage.setItem('themeMode', themeMode);
+
+    const applyTheme = (nextTheme) => {
+      setTheme(nextTheme);
+      if (nextTheme === 'light') document.documentElement.classList.add('light');
+      else document.documentElement.classList.remove('light');
+      localStorage.setItem('theme', nextTheme);
+    };
+
+    if (themeMode === 'auto') {
+      const mediaQuery = window.matchMedia('(prefers-color-scheme: dark)');
+      applyTheme(mediaQuery.matches ? 'dark' : 'light');
+
+      const handler = (event) => applyTheme(event.matches ? 'dark' : 'light');
+      if (mediaQuery.addEventListener) mediaQuery.addEventListener('change', handler);
+      else mediaQuery.addListener(handler);
+
+      return () => {
+        if (mediaQuery.removeEventListener) mediaQuery.removeEventListener('change', handler);
+        else mediaQuery.removeListener(handler);
+      };
+    }
+
+    applyTheme(themeMode);
+  }, [themeMode]);
+
+  useEffect(() => {
+    localStorage.setItem('language', language);
+  }, [language]);
 
   const fetchAll = async () => {
     try {
@@ -73,12 +133,70 @@ export default function App() {
   useEffect(() => { fetchAll(); const t = setInterval(fetchAll, 15000); return () => clearInterval(t); }, []);
   const stocks = status?.available_stocks || [];
 
+  const handleLogin = () => {
+    const savedUsername = localStorage.getItem('username') || '';
+    setUsername(savedUsername);
+    setUsernameDraft(savedUsername);
+    setAppMode('dashboard');
+  };
+
+  const handleLogout = () => {
+    localStorage.removeItem('isLoggedIn');
+    setAppMode('landing');
+    setTab('stats');
+  };
+
   if (appMode === 'landing') {
-    return <LandingPage onLogin={() => setAppMode('dashboard')} theme={theme} toggleTheme={toggleTheme} />;
+    return <LandingPage onLogin={handleLogin} theme={theme} toggleTheme={toggleTheme} />;
   }
+
+  const needsUsernameSetup = !username;
+
+  const saveUsername = () => {
+    const clean = usernameDraft.trim().replace(/\s+/g, '_');
+    if (!clean) return;
+    localStorage.setItem('username', clean);
+    setUsername(clean);
+  };
 
   return (
     <div style={s.app}>
+      {needsUsernameSetup && (
+        <div style={{
+          position:'fixed', inset:0, zIndex:9999, background:'rgba(0,0,0,0.88)',
+          display:'flex', alignItems:'center', justifyContent:'center', padding:16,
+        }}>
+          <div style={{
+            width:'100%', maxWidth:460, background:'var(--tv-bg2)', border:'1px solid var(--tv-border)',
+            borderRadius:12, padding:20,
+          }}>
+            <div style={{ fontSize:16, fontWeight:700, color:'var(--tv-text)', marginBottom:8 }}>
+              Create your username
+            </div>
+            <div style={{ fontSize:12, color:'var(--tv-text2)', marginBottom:14 }}>
+              This username is permanent and will be shown in Account.
+            </div>
+            <input
+              value={usernameDraft}
+              onChange={(e) => setUsernameDraft(e.target.value)}
+              placeholder="e.g. archie_trader"
+              style={{ width:'100%', padding:'11px 12px', borderRadius:8, marginBottom:12 }}
+            />
+            <button
+              onClick={saveUsername}
+              disabled={!usernameDraft.trim()}
+              style={{
+                width:'100%', padding:'11px 12px', borderRadius:8, border:'none',
+                background: usernameDraft.trim() ? '#089981' : 'var(--tv-bg3)',
+                color:'#fff', cursor: usernameDraft.trim() ? 'pointer' : 'not-allowed', fontWeight:700,
+              }}
+            >
+              Save Username
+            </button>
+          </div>
+        </div>
+      )}
+
       {/* ── SIDEBAR ── */}
       <aside style={s.aside}>
         <div style={s.logo}>
@@ -94,16 +212,13 @@ export default function App() {
 
         <div style={s.divider} />
 
-        {/* Watchlist space filler and Theme toggle */}
+        {/* Push utility nav to bottom */}
         <div style={{ flex:1 }} />
-        
-        <div style={{ padding: '10px 14px' }}>
-          <div onClick={toggleTheme} style={{ display: 'flex', alignItems: 'center', gap: 8, cursor: 'pointer', color: 'var(--tv-text2)', fontSize: 12 }}>
-            <div style={{ width: 32, height: 18, background: theme === 'dark' ? 'var(--tv-bg3)' : 'var(--tv-border)', borderRadius: 10, position: 'relative', transition: 'background 0.3s' }}>
-              <div style={{ position: 'absolute', top: 2, left: theme === 'dark' ? 2 : 16, width: 14, height: 14, background: 'var(--tv-text)', borderRadius: '50%', transition: 'left 0.3s' }} />
-            </div>
-            {theme === 'dark' ? 'Dark Mode' : 'Light Mode'}
-          </div>
+
+        <div style={{ padding:'8px 8px 6px' }}>
+          {BOTTOM_NAV.map(n => (
+            <button key={n.id} onClick={() => setTab(n.id)} style={s.navBtn(tab===n.id)}>{n.label}</button>
+          ))}
         </div>
 
         <div style={s.footer}>
@@ -124,6 +239,16 @@ export default function App() {
           {tab==='stats'     && <StatsView portfolio={portfolio} theme={theme} />}
           {tab==='analytics' && <AnalyticsView availableStocks={stocks} activeStock={activeStock} setActiveStock={setActiveStock} watchlist={watchlist} onTogglePin={handleTogglePin} theme={theme} />}
           {tab==='portfolio' && <PortfolioView availableStocks={stocks} portfolio={portfolio} fetchPortfolio={fetchAll} watchlist={watchlist} onTogglePin={handleTogglePin} theme={theme} />}
+          {tab==='settings'  && (
+            <SettingsView
+              theme={theme}
+              themeMode={themeMode}
+              onThemeModeChange={setThemeMode}
+              language={language}
+              onLanguageChange={setLanguage}
+            />
+          )}
+          {tab==='account'   && <AccountView status={status} username={username} onLogout={handleLogout} language={language} />}
         </main>
       </div>
     </div>

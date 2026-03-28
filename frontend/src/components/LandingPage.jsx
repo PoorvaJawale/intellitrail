@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { supabase } from '../supabaseClient';
 
 // --- Dummy Data ---
 const TICKER_DATA = [
@@ -173,18 +174,56 @@ function ContactsView() {
   );
 }
 
+
 function AuthForm({ type, onSwitch, onAuthSuccess }) {
   const isLogin = type === 'login';
-  
-  const handleSubmit = (e) => {
+  const [signupUsername, setSignupUsername] = useState('');
+  const [signupFullName, setSignupFullName] = useState('');
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState('');
+
+  const handleSubmit = async (e) => {
     e.preventDefault();
+    setError('');
+    setLoading(true);
     if (isLogin) {
-      localStorage.setItem('isLoggedIn', 'true');
-      onAuthSuccess(); // Bypass real auth and jump to dashboard
+      // Supabase sign in
+      const { error: signInError } = await supabase.auth.signInWithPassword({ email, password });
+      setLoading(false);
+      if (signInError) {
+        setError(signInError.message);
+        return;
+      }
+      onAuthSuccess();
     } else {
-      // Simulate storing data to database
-      localStorage.setItem('hasAccount', 'true');
-      onSwitch('login'); // Redirect new user to login page
+      // Supabase sign up
+      const { data, error: signUpError } = await supabase.auth.signUp({ email, password });
+      if (signUpError) {
+        setLoading(false);
+        setError(signUpError.message);
+        return;
+      }
+      // Insert profile row
+      const user = data.user;
+      const userId = user?.id || data.session?.user?.id;
+      if (userId) {
+        const { error: profileError } = await supabase.from('profiles').insert([
+          {
+            id: userId,
+            username: signupUsername.trim().replace(/\s+/g, '_'),
+            full_name: signupFullName,
+          },
+        ]);
+        if (profileError) {
+          setLoading(false);
+          setError('Profile creation failed: ' + profileError.message);
+          return;
+        }
+      }
+      setLoading(false);
+      onSwitch('login');
     }
   };
 
@@ -201,31 +240,68 @@ function AuthForm({ type, onSwitch, onAuthSuccess }) {
         {!isLogin && (
           <div style={{ marginBottom: 20 }}>
             <label style={{ display: 'block', fontSize: 13, color: 'var(--tv-text2)', marginBottom: 8, fontWeight: 500 }}>Full Name</label>
-            <input required type="text" placeholder="John Doe" style={{ width: '100%', padding: '14px 16px', borderRadius: 10, fontSize: 14 }} />
+            <input
+              required
+              type="text"
+              value={signupFullName}
+              onChange={e => setSignupFullName(e.target.value)}
+              placeholder="John Doe"
+              style={{ width: '100%', padding: '14px 16px', borderRadius: 10, fontSize: 14 }}
+            />
+          </div>
+        )}
+
+        {!isLogin && (
+          <div style={{ marginBottom: 20 }}>
+            <label style={{ display: 'block', fontSize: 13, color: 'var(--tv-text2)', marginBottom: 8, fontWeight: 500 }}>Username (Permanent)</label>
+            <input
+              required
+              type="text"
+              value={signupUsername}
+              onChange={e => setSignupUsername(e.target.value)}
+              placeholder="archie_trader"
+              style={{ width: '100%', padding: '14px 16px', borderRadius: 10, fontSize: 14 }}
+            />
           </div>
         )}
 
         <div style={{ marginBottom: 20 }}>
           <label style={{ display: 'block', fontSize: 13, color: 'var(--tv-text2)', marginBottom: 8, fontWeight: 500 }}>Email</label>
-          <input required type="email" placeholder="trade@example.com" style={{ width: '100%', padding: '14px 16px', borderRadius: 10, fontSize: 14 }} />
+          <input
+            required
+            type="email"
+            value={email}
+            onChange={e => setEmail(e.target.value)}
+            placeholder="trade@example.com"
+            style={{ width: '100%', padding: '14px 16px', borderRadius: 10, fontSize: 14 }}
+          />
         </div>
 
         <div style={{ marginBottom: 32 }}>
           <label style={{ display: 'block', fontSize: 13, color: 'var(--tv-text2)', marginBottom: 8, fontWeight: 500 }}>Password</label>
-          <input required type="password" placeholder="••••••••" style={{ width: '100%', padding: '14px 16px', borderRadius: 10, fontSize: 14 }} />
+          <input
+            required
+            type="password"
+            value={password}
+            onChange={e => setPassword(e.target.value)}
+            placeholder="••••••••"
+            style={{ width: '100%', padding: '14px 16px', borderRadius: 10, fontSize: 14 }}
+          />
         </div>
 
-        <button type="submit" style={{ width: '100%', padding: '16px', fontSize: 15, fontWeight: 600, color: '#fff', background: '#089981', border: 'none', borderRadius: 10, cursor: 'pointer', marginBottom: 24, transition: 'all 0.2s' }}
-          onMouseEnter={e => e.currentTarget.style.background = '#0aab91'}
-          onMouseLeave={e => e.currentTarget.style.background = '#089981'}>
-          {isLogin ? 'Sign In' : 'Sign Up'}
+        {error && <div style={{ color: '#F23645', marginBottom: 16, textAlign: 'center', fontWeight: 600 }}>{error}</div>}
+
+        <button type="submit" disabled={loading} style={{ width: '100%', padding: '16px', fontSize: 15, fontWeight: 600, color: '#fff', background: loading ? '#ccc' : '#089981', border: 'none', borderRadius: 10, cursor: loading ? 'not-allowed' : 'pointer', marginBottom: 24, transition: 'all 0.2s' }}
+          onMouseEnter={e => { if (!loading) e.currentTarget.style.background = '#0aab91'; }}
+          onMouseLeave={e => { if (!loading) e.currentTarget.style.background = loading ? '#ccc' : '#089981'; }}>
+          {loading ? (isLogin ? 'Signing In...' : 'Signing Up...') : (isLogin ? 'Sign In' : 'Sign Up')}
         </button>
 
         <div style={{ textAlign: 'center', fontSize: 14, color: 'var(--tv-text3)' }}>
           {isLogin ? "Don't have an account? " : "Already have an account? "}
           <span 
-            onClick={() => onSwitch(isLogin ? 'signup' : 'login')}
-            style={{ color: '#089981', cursor: 'pointer', fontWeight: 600 }}
+            onClick={() => !loading && onSwitch(isLogin ? 'signup' : 'login')}
+            style={{ color: '#089981', cursor: loading ? 'not-allowed' : 'pointer', fontWeight: 600 }}
           >
             {isLogin ? 'Sign up' : 'Log in'}
           </span>
