@@ -129,51 +129,101 @@ export default function CandlestickChart({ chartData, ticker, metrics, changePct
     });
     candles.setData(validData);
 
-    // ── SMA 20 ──
+    // ── Indicator data ──
+    const sma20Data = validData.filter(d => d.sma20 != null).map(d => ({ time: d.time, value: d.sma20 }));
+    const sma50Data = validData.filter(d => d.sma50 != null).map(d => ({ time: d.time, value: d.sma50 }));
+    const bbUpperData = validData.filter(d => d.bbUpper != null).map(d => ({ time: d.time, value: d.bbUpper }));
+    const bbLowerData = validData.filter(d => d.bbLower != null).map(d => ({ time: d.time, value: d.bbLower }));
+
+    // ── SMA 20 line ──
     const sma20 = chart.addSeries(LineSeries, {
-      color:                  "#2962ff",
+      color:                  "rgba(91,141,239,0.8)",
       lineWidth:              1,
+      crosshairMarkerVisible: false,
+      priceLineVisible:       false,
+      lastValueVisible:       false,
+      title:                  "",
+    });
+    sma20.setData(sma20Data);
+
+    // ── SMA 20 right label color ──
+    const sma20Label = chart.addSeries(LineSeries, {
+      color:                  "rgba(91,141,239,0.12)",
+      lineVisible:            false,
       crosshairMarkerVisible: false,
       priceLineVisible:       false,
       lastValueVisible:       true,
       title:                  "SMA20",
     });
-    sma20.setData(validData.filter(d => d.sma20 != null).map(d => ({ time: d.time, value: d.sma20 })));
+    sma20Label.setData(sma20Data);
 
-    // ── SMA 50 ──
+    // ── SMA 50 line ──
     const sma50 = chart.addSeries(LineSeries, {
-      color:                  "#f39c12",
+      color:                  "rgba(197,139,78,0.8)",
       lineWidth:              1,
+      crosshairMarkerVisible: false,
+      priceLineVisible:       false,
+      lastValueVisible:       false,
+      title:                  "",
+    });
+    sma50.setData(sma50Data);
+
+    // ── SMA 50 right label color ──
+    const sma50Label = chart.addSeries(LineSeries, {
+      color:                  "rgba(197,139,78,0.12)",
+      lineVisible:            false,
       crosshairMarkerVisible: false,
       priceLineVisible:       false,
       lastValueVisible:       true,
       title:                  "SMA50",
     });
-    sma50.setData(validData.filter(d => d.sma50 != null).map(d => ({ time: d.time, value: d.sma50 })));
+    sma50Label.setData(sma50Data);
 
-    // ── BB Upper (very subtle dashed) ──
+    // ── BB Upper line (very subtle dashed) ──
     const bbUpper = chart.addSeries(LineSeries, {
-      color:                  "rgba(120,100,200,0.45)",
+      color:                  "rgba(139,94,60,0.8)",
       lineWidth:              1,
       lineStyle:              2,
+      crosshairMarkerVisible: false,
+      priceLineVisible:       false,
+      lastValueVisible:       false,
+      title:                  "",
+    });
+    bbUpper.setData(bbUpperData);
+
+    // ── BB Upper right label color ──
+    const bbUpperLabel = chart.addSeries(LineSeries, {
+      color:                  "rgba(139,94,60,0.12)",
+      lineVisible:            false,
       crosshairMarkerVisible: false,
       priceLineVisible:       false,
       lastValueVisible:       true,
       title:                  "BB Upper",
     });
-    bbUpper.setData(validData.filter(d => d.bbUpper != null).map(d => ({ time: d.time, value: d.bbUpper })));
+    bbUpperLabel.setData(bbUpperData);
 
-    // ── BB Lower (very subtle dashed) ──
+    // ── BB Lower line (very subtle dashed) ──
     const bbLower = chart.addSeries(LineSeries, {
-      color:                  "rgba(120,100,200,0.45)",
+      color:                  "rgba(95,122,118,0.8)",
       lineWidth:              1,
       lineStyle:              2,
+      crosshairMarkerVisible: false,
+      priceLineVisible:       false,
+      lastValueVisible:       false,
+      title:                  "",
+    });
+    bbLower.setData(bbLowerData);
+
+    // ── BB Lower right label color ──
+    const bbLowerLabel = chart.addSeries(LineSeries, {
+      color:                  "rgba(95,122,118,0.12)",
+      lineVisible:            false,
       crosshairMarkerVisible: false,
       priceLineVisible:       false,
       lastValueVisible:       true,
       title:                  "BB Lower",
     });
-    bbLower.setData(validData.filter(d => d.bbLower != null).map(d => ({ time: d.time, value: d.bbLower })));
+    bbLowerLabel.setData(bbLowerData);
 
     chart.timeScale().fitContent();
 
@@ -197,6 +247,24 @@ export default function CandlestickChart({ chartData, ticker, metrics, changePct
     <ChartErrorBoundary>
       <div style={{ width: "100%", height: "100%", background: "var(--tv-bg)", position: "relative" }}>
         <div ref={containerRef} style={{ width: "100%", height: "100%", background: "var(--tv-bg)" }} />
+
+        <img
+          src="/icon.png"
+          alt=""
+          aria-hidden="true"
+          style={{
+            position: "absolute",
+            right: 68,
+            top: 14,
+            width: 56,
+            height: 56,
+            opacity: 0.5,
+            pointerEvents: "none",
+            userSelect: "none",
+            zIndex: 15,
+            filter: "drop-shadow(0 1px 2px rgba(0,0,0,0.35))",
+          }}
+        />
 
         {metrics && (
           <div style={{

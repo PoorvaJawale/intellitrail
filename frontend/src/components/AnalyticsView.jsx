@@ -91,7 +91,6 @@ function SymbolSearchModal({ availableStocks, watchlist, value, onChange, onTogg
             boxShadow: "0 10px 30px rgba(0,0,0,0.8)", display: "flex", flexDirection: "column",
             overflow: "hidden", maxHeight: "60vh"
           }}>
-            {/* Header / Search */}
             <div style={{ padding: "12px 16px 0", background: "var(--tv-bg)" }}>
               <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 12 }}>
                 <div style={{ fontSize: 16, fontWeight: 600, color: "var(--tv-text)" }}>Symbol Search</div>
@@ -110,7 +109,7 @@ function SymbolSearchModal({ availableStocks, watchlist, value, onChange, onTogg
                     padding: "10px 40px", color: "var(--tv-text)", fontSize: 14, outline: "none", boxSizing: "border-box",
                     transition: "border 0.2s"
                   }} onFocus={e => e.target.style.borderColor = "var(--tv-text)"} onBlur={e => e.target.style.borderColor = "var(--tv-border)"} />
-                
+
                 {query && (
                   <button onClick={() => setQuery("")} style={{ position: "absolute", right: 16, top: "50%", transform: "translateY(-50%)", background: "var(--tv-text)", border: "none", color: "var(--tv-bg)", borderRadius: "50%", padding: 2, display: "flex", cursor: "pointer" }}>
                     <ClearIcon />
@@ -119,32 +118,28 @@ function SymbolSearchModal({ availableStocks, watchlist, value, onChange, onTogg
               </div>
             </div>
 
-            {/* List */}
             <div style={{ overflowY: "auto", flex: 1, background: "var(--tv-bg)" }}>
-              {sortedList.map((w, index) => {
+              {sortedList.map((w) => {
                 const isMatch = !query || w.ticker.toLowerCase().includes(query.toLowerCase());
                 return (
-                  <button key={w.ticker} onClick={() => { if(isMatch) { onChange(w.ticker); setOpen(false); } }} style={{
+                  <button key={w.ticker} onClick={() => { if (isMatch) { onChange(w.ticker); setOpen(false); } }} style={{
                     width: "100%", display: "flex", alignItems: "center", justifyContent: "space-between",
-                    padding: "8px 16px", background: "transparent", borderTop: "1px solid transparent", borderBottom: "1px solid var(--tv-border)", 
+                    padding: "8px 16px", background: "transparent", borderTop: "1px solid transparent", borderBottom: "1px solid var(--tv-border)",
                     cursor: isMatch ? "pointer" : "default", opacity: isMatch ? 1 : 0.25,
                     transition: "none", textAlign: "left", outline: "none", position: "relative"
-                  }} onMouseOver={e => { if(isMatch) { e.currentTarget.style.background = "var(--tv-bg3)"; e.currentTarget.style.zIndex=1; } }} onMouseOut={e => { e.currentTarget.style.background = "transparent"; e.currentTarget.style.zIndex=0; }}>
-                    
-                    {/* Left Side: Icon + Ticker + Name */}
+                  }} onMouseOver={e => { if (isMatch) { e.currentTarget.style.background = "var(--tv-bg3)"; e.currentTarget.style.zIndex = 1; } }} onMouseOut={e => { e.currentTarget.style.background = "transparent"; e.currentTarget.style.zIndex = 0; }}>
+
                     <div style={{ display: "flex", alignItems: "center", gap: 16 }}>
                       <SymbolIcon ticker={w.ticker} />
                       <div style={{ color: "var(--tv-text)", fontSize: 14, fontWeight: 600, width: 90 }}>{w.ticker}</div>
                       <div style={{ color: "var(--tv-text2)", fontSize: 13 }}>{w.ticker} Corporation</div>
                     </div>
 
-                    {/* Right Side: Type + Pin + Dataset Info */}
                     <div style={{ display: "flex", alignItems: "center", gap: 16 }}>
                       <div style={{ fontSize: 12, color: "var(--tv-text3)" }}>stock</div>
                       <button onClick={(e) => { e.stopPropagation(); onTogglePin(w.ticker); }} style={{ background: "none", border: "none", cursor: "pointer", display: "flex", alignItems: "center", padding: 4 }}>
                         <PinIcon pinned={w.is_pinned} />
                       </button>
-                      {/* Integrated Dataset Live Info */}
                       <div style={{ width: 80, textAlign: "right", display: "flex", flexDirection: "column", gap: 2 }}>
                         <div style={{ fontSize: 13, fontWeight: 600, color: w.trend === "up" ? "#089981" : "#F23645" }}>
                           {w.pct > 0 ? "+" : ""}{w.pct.toFixed(2)}%
@@ -170,7 +165,7 @@ function RsiGauge({ rsi, label }) {
   const pct = Math.min(100, Math.max(0, rsi));
   const color = rsi < 30 ? "#089981" : rsi > 70 ? "#F23645" : "#f39c12";
   return (
-    <div style={{ padding: "10px 14px", background: "var(--tv-bg)", border: "1px solid var(--tv-border)", borderRadius: 8 }}>
+    <div style={{ padding: "10px 14px", background: "var(--tv-bg)", borderRadius: 8 }}>
       <div style={{ fontSize: 9, color: "var(--tv-text3)", textTransform: "uppercase", letterSpacing: "0.1em", marginBottom: 6 }}>RSI (14)</div>
       <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 6 }}>
         <div style={{ fontSize: 20, fontWeight: 700, fontFamily: "monospace", color }}>{rsi?.toFixed(1)}</div>
@@ -191,10 +186,10 @@ function RsiGauge({ rsi, label }) {
   );
 }
 
-/* ── Metric tile ── */
-function Tile({ label, value, sub, color, mono }) {
+/* ── Metric cell (row/column layout) ── */
+function MetricCell({ label, value, sub, color, mono }) {
   return (
-    <div style={{ padding: "10px 14px", background: "var(--tv-bg)", border: "1px solid var(--tv-border)", borderRadius: 8 }}>
+    <div style={{ padding: "10px 12px", minHeight: 76, display: "flex", flexDirection: "column", justifyContent: "center" }}>
       <div style={{ fontSize: 9, color: "var(--tv-text3)", textTransform: "uppercase", letterSpacing: "0.1em", marginBottom: 5 }}>{label}</div>
       <div style={{ fontSize: 16, fontWeight: 700, color: color || "var(--tv-text)", fontFamily: mono ? "monospace" : undefined }}>{value}</div>
       {sub && <div style={{ fontSize: 10, color: "var(--tv-text2)", marginTop: 3 }}>{sub}</div>}
@@ -202,7 +197,32 @@ function Tile({ label, value, sub, color, mono }) {
   );
 }
 
-export default function AnalyticsView({ availableStocks, activeStock, setActiveStock, watchlist, onTogglePin, theme }) {
+function SplitMetricRows({ rows }) {
+  return (
+    <div style={{ background: "var(--tv-bg)", borderRadius: 8, overflow: "hidden" }}>
+      {rows.map(([left, right], idx) => (
+        <React.Fragment key={idx}>
+          <div
+            style={{
+              display: "grid",
+              gridTemplateColumns: "1fr 2px 1fr",
+              alignItems: "stretch",
+            }}
+          >
+            <MetricCell {...left} />
+            <div style={{ background: "var(--tv-border)", margin: "8px 0", borderRadius: 2 }} />
+            {right ? <MetricCell {...right} /> : <div style={{ minHeight: 76 }} />}
+          </div>
+          {idx < rows.length - 1 && (
+            <div style={{ height: 2, background: "var(--tv-border)", margin: "0 14px", borderRadius: 2 }} />
+          )}
+        </React.Fragment>
+      ))}
+    </div>
+  );
+}
+
+export default function AnalyticsView({ availableStocks, activeStock, setActiveStock, watchlist, onTogglePin, theme, onToggleTheme }) {
   const [tf, setTf] = useState("1m");
   const [stockData, setStockData] = useState(null);
   const [analysis, setAnalysis] = useState(null);
@@ -213,6 +233,12 @@ export default function AnalyticsView({ availableStocks, activeStock, setActiveS
   const [orderLoading, setOrderLoading] = useState(false);
   const [portfolio, setPortfolio] = useState({ active_bots: [], summary: {} });
   const [rightTab, setRightTab] = useState("watchlist");
+  const [liveTime, setLiveTime] = useState(() => new Date());
+
+  useEffect(() => {
+    const t = setInterval(() => setLiveTime(new Date()), 1000);
+    return () => clearInterval(t);
+  }, []);
 
   useEffect(() => {
     getPortfolio().then(setPortfolio).catch(() => {});
@@ -249,6 +275,13 @@ export default function AnalyticsView({ availableStocks, activeStock, setActiveS
   const an = analysis;
   const currentWl = watchlist.find(w => w.ticker === activeStock);
   const bullish = m?.trend === "Bullish";
+  const timeText = liveTime.toLocaleTimeString("en-IN", {
+    hour: "2-digit",
+    minute: "2-digit",
+    second: "2-digit",
+    hour12: false,
+    timeZone: "Asia/Kolkata",
+  });
 
   return (
     <div style={{ display: "flex", flexDirection: "column", height: "100%", overflow: "hidden", background: "var(--tv-bg)" }}>
@@ -267,6 +300,27 @@ export default function AnalyticsView({ availableStocks, activeStock, setActiveS
           {[["▲ Bull", "#089981"], ["▼ Bear", "#F23645"], ["SMA20", "#2962ff"], ["SMA50", "#f39c12"], ["BB", "#7864c8"]].map(([label, color]) => (
             <span key={label} style={{ fontSize: 10, color, opacity: 0.8 }}>{label}</span>
           ))}
+        </div>
+        <div style={{ marginLeft: "auto", display: "flex", alignItems: "center", gap: 10 }}>
+          <button
+            onClick={onToggleTheme}
+            style={{
+              border: "1px solid var(--tv-border)",
+              background: "var(--tv-bg3)",
+              color: "var(--tv-text2)",
+              borderRadius: 12,
+              padding: "3px 8px",
+              fontSize: 10,
+              fontWeight: 700,
+              cursor: "pointer",
+              letterSpacing: "0.08em",
+            }}
+          >
+            {theme === "dark" ? "DARK" : "LIGHT"}
+          </button>
+          <div style={{ fontSize: 11, color: "var(--tv-text2)", fontFamily: "monospace", letterSpacing: "0.04em" }}>
+            {timeText} IST
+          </div>
         </div>
       </div>
 
@@ -317,11 +371,17 @@ export default function AnalyticsView({ availableStocks, activeStock, setActiveS
                 <div style={{ fontSize: 9, color: "var(--tv-text3)", textTransform: "uppercase", letterSpacing: "0.12em", fontWeight: 700, marginBottom: 8 }}>
                   Market Sentiment
                 </div>
-                <div style={{ display: "flex", flexDirection: "column", gap: 10, marginBottom: 16 }}>
-                  <RsiGauge rsi={an.technical.rsi} label={an.technical.rsi_label} />
-                  <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 8 }}>
-                    <Tile label="Trend"      value={an.technical.trend}       sub={an.technical.trend_signal} color={an.technical.trend === "Bullish" ? "#089981" : "#F23645"} />
-                    <Tile label="Total Ret"    value={`${an.performance.total_return > 0 ? "+" : ""}${an.performance.total_return?.toFixed(2)}%`} color={an.performance.total_return >= 0 ? "#089981" : "#F23645"} />
+                <div style={{ borderTop: "1px solid var(--tv-border)", borderBottom: "1px solid var(--tv-border)", padding: "10px 0", marginBottom: 16 }}>
+                  <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
+                    <RsiGauge rsi={an.technical.rsi} label={an.technical.rsi_label} />
+                    <SplitMetricRows
+                      rows={[
+                        [
+                          { label: "Trend", value: an.technical.trend, sub: an.technical.trend_signal, color: an.technical.trend === "Bullish" ? "#089981" : "#F23645" },
+                          { label: "Total Ret", value: `${an.performance.total_return > 0 ? "+" : ""}${an.performance.total_return?.toFixed(2)}%`, color: an.performance.total_return >= 0 ? "#089981" : "#F23645" },
+                        ],
+                      ]}
+                    />
                   </div>
                 </div>
 
@@ -329,36 +389,51 @@ export default function AnalyticsView({ availableStocks, activeStock, setActiveS
                 <div style={{ fontSize: 9, color: "var(--tv-text3)", textTransform: "uppercase", letterSpacing: "0.12em", fontWeight: 700, marginBottom: 8 }}>
                   Technical Indicators
                 </div>
-                <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 8, marginBottom: 16 }}>
-                  <Tile label="Volatility" value={`${an.technical.atr_pct?.toFixed(3)}%`} sub="ATR Rate" />
-                  <Tile label="BB Position" value={`${(an.technical.bb_position * 100)?.toFixed(0)}%`} sub={an.technical.bb_signal} color={an.technical.bb_position < 0.2 ? "#089981" : an.technical.bb_position > 0.8 ? "#F23645" : "#f39c12"} />
-                  <Tile label="Sup / Res" value={`₹${an.fundamental.support?.toLocaleString("en-IN")}`} sub={`R: ₹${an.fundamental.resistance?.toLocaleString("en-IN")}`} mono />
-                  <Tile label="Volume"    value={an.fundamental.volume_trend != null ? `${an.fundamental.volume_trend > 0 ? "+" : ""}${an.fundamental.volume_trend}%` : "N/A"} color={an.fundamental.volume_trend > 0 ? "#089981" : an.fundamental.volume_trend < 0 ? "#F23645" : undefined} />
-                  <Tile label="20D Vol"  value={`${an.performance.volatility_20d?.toFixed(1)}%`} sub="Annualised" />
-                  <Tile label="Sharpe"    value={an.performance.sharpe_ratio?.toFixed(2)} color={an.performance.sharpe_ratio > 1 ? "#089981" : an.performance.sharpe_ratio < 0 ? "#F23645" : "#f39c12"} />
-                  <Tile label="10D Mom"    value={`${an.fundamental.momentum_10d > 0 ? "+" : ""}${an.fundamental.momentum_10d?.toFixed(1)}%`} color={an.fundamental.momentum_10d >= 0 ? "#089981" : "#F23645"} />
+                <div style={{ borderTop: "1px solid var(--tv-border)", borderBottom: "1px solid var(--tv-border)", padding: "10px 0", marginBottom: 16 }}>
+                  <SplitMetricRows
+                    rows={[
+                      [
+                        { label: "Volatility", value: `${an.technical.atr_pct?.toFixed(3)}%`, sub: "ATR Rate" },
+                        { label: "BB Position", value: `${(an.technical.bb_position * 100)?.toFixed(0)}%`, sub: an.technical.bb_signal, color: an.technical.bb_position < 0.2 ? "#089981" : an.technical.bb_position > 0.8 ? "#F23645" : "#f39c12" },
+                      ],
+                      [
+                        { label: "Sup / Res", value: `₹${an.fundamental.support?.toLocaleString("en-IN")}`, sub: `R: ₹${an.fundamental.resistance?.toLocaleString("en-IN")}`, mono: true },
+                        { label: "Volume", value: an.fundamental.volume_trend != null ? `${an.fundamental.volume_trend > 0 ? "+" : ""}${an.fundamental.volume_trend}%` : "N/A", color: an.fundamental.volume_trend > 0 ? "#089981" : an.fundamental.volume_trend < 0 ? "#F23645" : undefined },
+                      ],
+                      [
+                        { label: "20D Vol", value: `${an.performance.volatility_20d?.toFixed(1)}%`, sub: "Annualised" },
+                        { label: "Sharpe", value: an.performance.sharpe_ratio?.toFixed(2), color: an.performance.sharpe_ratio > 1 ? "#089981" : an.performance.sharpe_ratio < 0 ? "#F23645" : "#f39c12" },
+                      ],
+                      [
+                        { label: "10D Mom", value: `${an.fundamental.momentum_10d > 0 ? "+" : ""}${an.fundamental.momentum_10d?.toFixed(1)}%`, color: an.fundamental.momentum_10d >= 0 ? "#089981" : "#F23645" },
+                        null,
+                      ],
+                    ]}
+                  />
                 </div>
                 
                 {/* AI Prediction Header */}
                 <div style={{ fontSize: 9, color: "var(--tv-text3)", textTransform: "uppercase", letterSpacing: "0.12em", fontWeight: 700, marginBottom: 8 }}>
                   AI Engine Evaluation
                 </div>
-                <div style={{ padding: "12px 14px", background: "var(--tv-bg)", border: "1px solid var(--tv-border)", borderRadius: 8, display: "flex", alignItems: "center", justifyContent: "space-between" }}>
-                  <div>
-                    <div style={{ fontSize: 9, color: "var(--tv-text3)", textTransform: "uppercase", letterSpacing: "0.1em", marginBottom: 4 }}>Forecasted Next Close</div>
-                    <div style={{ fontSize: 20, fontWeight: 700, fontFamily: "monospace", color: an.ai.direction === "UP" ? "#089981" : "#F23645" }}>
-                      ₹{an.ai.prediction?.toLocaleString("en-IN", { minimumFractionDigits: 2 })}
+                <div style={{ borderTop: "1px solid var(--tv-border)", borderBottom: "1px solid var(--tv-border)", padding: "10px 0" }}>
+                  <div style={{ padding: "12px 14px", background: "var(--tv-bg)", borderRadius: 8, display: "flex", alignItems: "center", justifyContent: "space-between" }}>
+                    <div>
+                      <div style={{ fontSize: 9, color: "var(--tv-text3)", textTransform: "uppercase", letterSpacing: "0.1em", marginBottom: 4 }}>Forecasted Next Close</div>
+                      <div style={{ fontSize: 20, fontWeight: 700, fontFamily: "monospace", color: an.ai.direction === "UP" ? "#089981" : "#F23645" }}>
+                        ₹{an.ai.prediction?.toLocaleString("en-IN", { minimumFractionDigits: 2 })}
+                      </div>
+                      <div style={{ fontSize: 10, color: "var(--tv-text2)", marginTop: 2 }}>
+                        {an.ai.direction === "UP" ? "▲" : "▼"} Expected {an.ai.confidence?.toFixed(1)}% Delta
+                      </div>
                     </div>
-                    <div style={{ fontSize: 10, color: "var(--tv-text2)", marginTop: 2 }}>
-                      {an.ai.direction === "UP" ? "▲" : "▼"} Expected {an.ai.confidence?.toFixed(1)}% Delta
-                    </div>
+                    <span style={{
+                      padding: "6px 14px", borderRadius: 20, fontSize: 12, fontWeight: 800,
+                      background: an.ai.direction === "UP" ? "rgba(8,153,129,0.15)" : "rgba(242,54,69,0.15)",
+                      border: `1px solid ${an.ai.direction === "UP" ? "rgba(8,153,129,0.4)" : "rgba(242,54,69,0.4)"}`,
+                      color: an.ai.direction === "UP" ? "#089981" : "#F23645"
+                    }}>{an.ai.direction}</span>
                   </div>
-                  <span style={{
-                    padding: "6px 14px", borderRadius: 20, fontSize: 12, fontWeight: 800,
-                    background: an.ai.direction === "UP" ? "rgba(8,153,129,0.15)" : "rgba(242,54,69,0.15)",
-                    border: `1px solid ${an.ai.direction === "UP" ? "rgba(8,153,129,0.4)" : "rgba(242,54,69,0.4)"}`,
-                    color: an.ai.direction === "UP" ? "#089981" : "#F23645"
-                  }}>{an.ai.direction}</span>
                 </div>
               </div>
             )}
@@ -374,7 +449,7 @@ export default function AnalyticsView({ availableStocks, activeStock, setActiveS
                       background: activeStock === w.ticker ? "var(--tv-bg3)" : "transparent", border: "none", borderBottom: "1px solid var(--tv-border)", cursor: "pointer"
                     }}>
                       <div>
-                        <div style={{ fontSize: 13, fontWeight: 600, color: activeStock === w.ticker ? "#2962ff" : "var(--tv-text)", textAlign: "left" }}>{w.ticker}</div>
+                        <div style={{ fontSize: 13, fontWeight: 600, color: activeStock === w.ticker ? "#089981" : "var(--tv-text)", textAlign: "left" }}>{w.ticker}</div>
                         <div style={{ fontSize: 11, color: "var(--tv-text2)", textAlign: "left", marginTop: 2 }}>Stock</div>
                       </div>
                       <div style={{ textAlign: "right", alignSelf: "center" }}>

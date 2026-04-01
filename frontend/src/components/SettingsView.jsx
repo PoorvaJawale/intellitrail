@@ -19,17 +19,6 @@ const themeChip = (active) => ({
 });
 
 export default function SettingsView({ theme, themeMode, onThemeModeChange, language, onLanguageChange }) {
-  const [compactMode, setCompactMode] = useState(() => localStorage.getItem('compactMode') === 'true');
-  const [priceAlerts, setPriceAlerts] = useState(() => localStorage.getItem('priceAlerts') !== 'false');
-
-  useEffect(() => {
-    localStorage.setItem('compactMode', compactMode ? 'true' : 'false');
-  }, [compactMode]);
-
-  useEffect(() => {
-    localStorage.setItem('priceAlerts', priceAlerts ? 'true' : 'false');
-  }, [priceAlerts]);
-
   return (
     <div style={{ height: '100%', overflowY: 'auto', background: 'var(--tv-bg)', padding: 16 }}>
       <div style={{ fontSize: 12, color: 'var(--tv-text3)', textTransform: 'uppercase', letterSpacing: '0.12em', marginBottom: 6 }}>
@@ -57,10 +46,6 @@ export default function SettingsView({ theme, themeMode, onThemeModeChange, lang
             </div>
           </div>
 
-          <label style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginTop: 12 }}>
-            <span style={{ fontSize: 12, color: 'var(--tv-text)' }}>Compact layout</span>
-            <input type="checkbox" checked={compactMode} onChange={(e) => setCompactMode(e.target.checked)} />
-          </label>
         </div>
 
         <div style={card}>
@@ -87,18 +72,6 @@ export default function SettingsView({ theme, themeMode, onThemeModeChange, lang
           </div>
         </div>
 
-        <div style={card}>
-          <div style={{ fontSize: 14, fontWeight: 700, color: 'var(--tv-text)', marginBottom: 12 }}>
-            Notifications
-          </div>
-          <label style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 10 }}>
-            <span style={{ fontSize: 12, color: 'var(--tv-text)' }}>Price movement alerts</span>
-            <input type="checkbox" checked={priceAlerts} onChange={(e) => setPriceAlerts(e.target.checked)} />
-          </label>
-          <div style={{ fontSize: 11, color: 'var(--tv-text2)' }}>
-            Alert delivery is UI-only for now and can be integrated with backend rules later.
-          </div>
-        </div>
       </div>
     </div>
   );

@@ -175,6 +175,15 @@ function PnlChart({ series }) {
 
   return (
     <svg width="100%" viewBox={`0 0 ${W} ${H}`} style={{ overflow: "visible" }}>
+      <image
+        href="/icon.png"
+        x={8}
+        y={H - PAD.b - 14}
+        width={12}
+        height={12}
+        opacity={0.22}
+        preserveAspectRatio="xMidYMid meet"
+      />
       {/* zero line */}
       {zeroY > PAD.t && zeroY < H - PAD.b && (
         <line x1={PAD.l} y1={zeroY} x2={W - PAD.r} y2={zeroY} stroke="var(--tv-border)" strokeWidth={1} strokeDasharray="3 3" />
@@ -210,8 +219,8 @@ function PnlChart({ series }) {
 }
 
 /* ── Bot Card (expandable like Streamlit) ── */
-function BotCard({ bot, onTerminate, watchlist }) {
-  const [open, setOpen] = useState(false);
+function BotCard({ bot, onTerminate, watchlist, isAutoOpen }) {
+  const [open, setOpen] = useState(isAutoOpen || false);
   const [pnlData, setPnlData] = useState(null);
   const wl = watchlist.find(w => w.ticker === bot.ticker);
 
@@ -330,7 +339,7 @@ function BotCard({ bot, onTerminate, watchlist }) {
 /* ── Main component ── */
 const LABEL = { fontSize: 9, color: "var(--tv-text3)", textTransform: "uppercase", letterSpacing: "0.12em", fontWeight: 700, marginBottom: 7, display: "block" };
 
-export default function PortfolioView({ availableStocks, portfolio, fetchPortfolio, watchlist, onTogglePin }) {
+export default function PortfolioView({ availableStocks, portfolio, fetchPortfolio, watchlist, onTogglePin, expandBotId }) {
   const { active_bots = [], summary = {} } = portfolio;
   const [side, setSide]     = useState("buy");
   const [ticker, setTicker] = useState(availableStocks[0] || "");
@@ -519,7 +528,7 @@ export default function PortfolioView({ availableStocks, portfolio, fetchPortfol
             </div>
           ) : (
             active_bots.map(bot => (
-              <BotCard key={bot.id} bot={bot} onTerminate={terminate} watchlist={watchlist} />
+              <BotCard key={bot.id} bot={bot} onTerminate={terminate} watchlist={watchlist} isAutoOpen={bot.id === expandBotId} />
             ))
           )}
         </div>
