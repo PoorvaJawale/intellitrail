@@ -27,7 +27,7 @@ const PinIcon = ({ pinned }) => (
 );
 
 /* ── Symbol Search Modal ── */
-function SymbolSearchModal({ availableStocks, watchlist, value, onChange, onTogglePin }) {
+function SymbolSearchModal({ availableStocks, watchlist, value, onChange, onTogglePin, t }) {
   const [open, setOpen] = useState(false);
   const [query, setQuery] = useState("");
 
@@ -58,7 +58,7 @@ function SymbolSearchModal({ availableStocks, watchlist, value, onChange, onTogg
         background: "var(--tv-bg2)", border: "1px solid var(--tv-border)", borderRadius: 8,
         cursor: "pointer", color: "var(--tv-text)", fontSize: 13, fontWeight: 700, width: "100%", transition: "background 0.2s"
       }} onMouseOver={e => e.currentTarget.style.background = "var(--tv-bg3)"} onMouseOut={e => e.currentTarget.style.background = "var(--tv-bg2)"}>
-        <span style={{ flex: 1, textAlign: "left" }}>{value || "Select symbol"}</span>
+        <span style={{ flex: 1, textAlign: "left" }}>{value || t('portfolio.symbolSearch')}</span>
         <span style={{ color: "var(--tv-text2)", fontSize: 10 }}>▼</span>
       </button>
 
@@ -76,7 +76,7 @@ function SymbolSearchModal({ availableStocks, watchlist, value, onChange, onTogg
             {/* Header / Search */}
             <div style={{ padding: "12px 16px 0", background: "var(--tv-bg)" }}>
               <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 12 }}>
-                <div style={{ fontSize: 16, fontWeight: 600, color: "var(--tv-text)" }}>Symbol Search</div>
+                <div style={{ fontSize: 16, fontWeight: 600, color: "var(--tv-text)" }}>{t('portfolio.symbolSearch')}</div>
                 <button onClick={() => setOpen(false)} style={{ background: "none", border: "none", color: "var(--tv-text2)", cursor: "pointer", fontSize: 18 }}>
                   <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
                 </button>
@@ -86,7 +86,7 @@ function SymbolSearchModal({ availableStocks, watchlist, value, onChange, onTogg
                   <SearchIcon />
                 </span>
                 <input autoFocus value={query} onChange={e => setQuery(e.target.value)}
-                  placeholder="Search"
+                  placeholder={t('analytics.search')}
                   style={{
                     width: "100%", background: "var(--tv-bg2)", border: "1px solid var(--tv-border)", borderRadius: 8,
                     padding: "10px 40px", color: "var(--tv-text)", fontSize: 14, outline: "none", boxSizing: "border-box",
@@ -122,7 +122,7 @@ function SymbolSearchModal({ availableStocks, watchlist, value, onChange, onTogg
 
                     {/* Right Side: Type + Pin + Dataset Info */}
                     <div style={{ display: "flex", alignItems: "center", gap: 16 }}>
-                      <div style={{ fontSize: 12, color: "var(--tv-text3)" }}>stock</div>
+                      <div style={{ fontSize: 12, color: "var(--tv-text3)" }}>{t('analytics.stock')}</div>
                       <button onClick={(e) => { e.stopPropagation(); onTogglePin(w.ticker); }} style={{ background: "none", border: "none", cursor: "pointer", display: "flex", alignItems: "center", padding: 4 }}>
                         <PinIcon pinned={w.is_pinned} />
                       </button>
@@ -219,7 +219,7 @@ function PnlChart({ series }) {
 }
 
 /* ── Bot Card (expandable like Streamlit) ── */
-function BotCard({ bot, onTerminate, watchlist, isAutoOpen }) {
+function BotCard({ bot, onTerminate, watchlist, isAutoOpen, t }) {
   const [open, setOpen] = useState(isAutoOpen || false);
   const [pnlData, setPnlData] = useState(null);
   const wl = watchlist.find(w => w.ticker === bot.ticker);
@@ -251,22 +251,22 @@ function BotCard({ bot, onTerminate, watchlist, isAutoOpen }) {
             background: isBuy ? "rgba(8,153,129,0.12)" : "rgba(242,54,69,0.12)",
             border: `1px solid ${isBuy ? "rgba(8,153,129,0.3)" : "rgba(242,54,69,0.3)"}`,
             color: isBuy ? "#089981" : "#F23645"
-          }}>{isBuy ? "LONG" : "SHORT"}</span>
+          }}>{isBuy ? t('portfolio.buyLabel') : t('portfolio.sellLabel')}</span>
           <span style={{ fontSize: 11, color: "var(--tv-text3)" }}>× {bot.qty}</span>
         </div>
 
         {/* Key metrics */}
         {[
-          ["Entry", `₹${bot.ai_exec_price?.toFixed(2)}`, null],
-          ["Live", wl ? `₹${wl.price.toLocaleString("en-IN")}` : "—", null],
-          ["P&L", `${pnl >= 0 ? "+" : ""}₹${pnl.toFixed(2)}`, pnl >= 0 ? "#089981" : "#F23645"],
-          ["Return", `${pnlPct >= 0 ? "+" : ""}${pnlPct.toFixed(2)}%`, pnlPct >= 0 ? "#089981" : "#F23645"],
-          ["Date", bot.entry_date, null],
-          ["Status", "● Executed", "#089981"],
+          [t('portfolio.entry'), `₹${bot.ai_exec_price?.toFixed(2)}`, null],
+          [t('analytics.live'), wl ? `₹${wl.price.toLocaleString("en-IN")}` : "—", null],
+          [t('portfolio.pnl'), `${pnl >= 0 ? "+" : ""}₹${pnl.toFixed(2)}`, pnl >= 0 ? "#089981" : "#F23645"],
+          [t('portfolio.return'), `${pnlPct >= 0 ? "+" : ""}${pnlPct.toFixed(2)}%`, pnlPct >= 0 ? "#089981" : "#F23645"],
+          [t('stats.entryDate'), bot.entry_date, null],
+          [t('portfolio.status'), `● ${t('portfolio.executed')}`, "#089981"],
         ].map(([label, val, color]) => (
           <div key={label} style={{ flex: 1, textAlign: "left" }}>
             <div style={{ fontSize: 9, color: "var(--tv-text3)", textTransform: "uppercase", letterSpacing: "0.08em", marginBottom: 2 }}>{label}</div>
-            <div style={{ fontSize: 12, fontWeight: label === "P&L" || label === "Return" ? 700 : 400, color: color || "var(--tv-text)", fontFamily: "monospace" }}>{val}</div>
+            <div style={{ fontSize: 12, fontWeight: label === t('portfolio.pnl') || label === t('portfolio.return') ? 700 : 400, color: color || "var(--tv-text)", fontFamily: "monospace" }}>{val}</div>
           </div>
         ))}
 
@@ -279,7 +279,7 @@ function BotCard({ bot, onTerminate, watchlist, isAutoOpen }) {
           {/* P&L Chart */}
           <div style={{ marginBottom: 14 }}>
             <div style={{ fontSize: 9, color: "var(--tv-text3)", textTransform: "uppercase", letterSpacing: "0.1em", fontWeight: 700, marginBottom: 8 }}>
-              AI P&amp;L — Simulated Over Time
+              {t('portfolio.aiPnl')}
             </div>
             <div style={{ background: "var(--tv-bg2)", border: "1px solid var(--tv-border)", borderRadius: 8, padding: "10px 14px" }}>
               {pnlData ? (
@@ -287,13 +287,13 @@ function BotCard({ bot, onTerminate, watchlist, isAutoOpen }) {
                   <PnlChart series={pnlData.series} />
                   <div style={{ display: "flex", gap: 24, marginTop: 8 }}>
                     <div>
-                      <div style={{ fontSize: 9, color: "var(--tv-text3)", textTransform: "uppercase", letterSpacing: "0.1em", marginBottom: 2 }}>Current P&amp;L</div>
+                      <div style={{ fontSize: 9, color: "var(--tv-text3)", textTransform: "uppercase", letterSpacing: "0.1em", marginBottom: 2 }}>{t('portfolio.currentPnl')}</div>
                       <div style={{ fontSize: 18, fontWeight: 700, fontFamily: "monospace", color: (pnlData.current_pnl || 0) >= 0 ? "#089981" : "#F23645" }}>
                         {(pnlData.current_pnl || 0) >= 0 ? "+" : ""}₹{(pnlData.current_pnl || 0).toFixed(2)}
                       </div>
                     </div>
                     <div>
-                      <div style={{ fontSize: 9, color: "var(--tv-text3)", textTransform: "uppercase", letterSpacing: "0.1em", marginBottom: 2 }}>Return</div>
+                      <div style={{ fontSize: 9, color: "var(--tv-text3)", textTransform: "uppercase", letterSpacing: "0.1em", marginBottom: 2 }}>{t('portfolio.return')}</div>
                       <div style={{ fontSize: 18, fontWeight: 700, fontFamily: "monospace", color: (pnlData.pnl_pct || 0) >= 0 ? "#089981" : "#F23645" }}>
                         {(pnlData.pnl_pct || 0) >= 0 ? "+" : ""}{(pnlData.pnl_pct || 0).toFixed(3)}%
                       </div>
@@ -301,7 +301,7 @@ function BotCard({ bot, onTerminate, watchlist, isAutoOpen }) {
                   </div>
                 </div>
               ) : (
-                <div style={{ color: "var(--tv-text3)", fontSize: 11, padding: "20px 0", textAlign: "center" }}>Loading P&amp;L chart…</div>
+                <div style={{ color: "var(--tv-text3)", fontSize: 11, padding: "20px 0", textAlign: "center" }}>{t('portfolio.loadingChart') || 'Loading P&L chart…'}</div>
               )}
             </div>
           </div>
@@ -310,7 +310,7 @@ function BotCard({ bot, onTerminate, watchlist, isAutoOpen }) {
           <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", gap: 16 }}>
             <div>
               <div style={{ fontSize: 9, color: "var(--tv-text3)", textTransform: "uppercase", letterSpacing: "0.1em", fontWeight: 700, marginBottom: 8 }}>
-                AI Execution Log
+                {t('portfolio.aiExecutionLog')}
               </div>
               {bot.logs?.map((log, i) => (
                 <div key={i} style={{ fontSize: 11, color: "var(--tv-text2)", marginBottom: 4 }}>
@@ -319,7 +319,7 @@ function BotCard({ bot, onTerminate, watchlist, isAutoOpen }) {
               ))}
               <div style={{ fontSize: 11, color: "var(--tv-text2)", marginTop: 2 }}>
                 <span style={{ color: "var(--tv-text3)", marginRight: 6 }}>›</span>
-                Strategy: <span style={{ color: isBuy ? "#089981" : "#F23645" }}>{bot.strat}</span>
+                {t('portfolio.strategy')}: <span style={{ color: isBuy ? "#089981" : "#F23645" }}>{bot.strat}</span>
               </div>
             </div>
             <button onClick={() => onTerminate(bot.id)} style={{
@@ -327,7 +327,7 @@ function BotCard({ bot, onTerminate, watchlist, isAutoOpen }) {
               border: "1px solid rgba(242,54,69,0.35)", borderRadius: 16,
               color: "#F23645", fontSize: 11, cursor: "pointer", fontWeight: 600, flexShrink: 0
             }}>
-              Close Position
+              {t('portfolio.closePosition')}
             </button>
           </div>
         </div>
@@ -339,7 +339,7 @@ function BotCard({ bot, onTerminate, watchlist, isAutoOpen }) {
 /* ── Main component ── */
 const LABEL = { fontSize: 9, color: "var(--tv-text3)", textTransform: "uppercase", letterSpacing: "0.12em", fontWeight: 700, marginBottom: 7, display: "block" };
 
-export default function PortfolioView({ availableStocks, portfolio, fetchPortfolio, watchlist, onTogglePin, expandBotId }) {
+export default function PortfolioView({ availableStocks, portfolio, fetchPortfolio, watchlist, onTogglePin, expandBotId, t }) {
   const { active_bots = [], summary = {} } = portfolio;
   const [side, setSide]     = useState("buy");
   const [ticker, setTicker] = useState(availableStocks[0] || "");
@@ -355,7 +355,7 @@ export default function PortfolioView({ availableStocks, portfolio, fetchPortfol
     try {
       await deployBot(ticker, side === "buy" ? "Auto-Scout (Buy)" : "Auto-Protect (Sell)", qty, simDays);
       await fetchPortfolio();
-    } catch (e) { alert("Deploy failed: " + e.message); }
+    } catch (e) { alert((t('portfolio.orderFailed') || 'Deploy failed') + ': ' + e.message); }
     setLoading(false);
   };
 
@@ -372,7 +372,7 @@ export default function PortfolioView({ availableStocks, portfolio, fetchPortfol
       {/* ════ LEFT — ORDER FORM ════ */}
       <div style={{ width: 280, flexShrink: 0, borderRight: "1px solid var(--tv-border)", background: "var(--tv-bg)", display: "flex", flexDirection: "column", overflowY: "auto" }}>
         <div style={{ padding: "14px 16px 0" }}>
-          <div style={{ fontSize: 11, color: "var(--tv-text3)", textTransform: "uppercase", letterSpacing: "0.12em", fontWeight: 700, marginBottom: 14 }}>New Order</div>
+          <div style={{ fontSize: 11, color: "var(--tv-text3)", textTransform: "uppercase", letterSpacing: "0.12em", fontWeight: 700, marginBottom: 14 }}>{t('portfolio.newOrder')}</div>
           {/* Buy / Sell toggle */}
           <div style={{ display: "flex", gap: 3, background: "var(--tv-bg3)", padding: 3, borderRadius: 24, border: "1px solid var(--tv-border)", marginBottom: 18 }}>
             {["buy", "sell"].map(s => (
@@ -382,7 +382,7 @@ export default function PortfolioView({ availableStocks, portfolio, fetchPortfol
                 background: side === s ? (s === "buy" ? "#089981" : "#F23645") : "transparent",
                 color: side === s ? "#fff" : "var(--tv-text2)", transition: "all .15s"
               }}>
-                {s === "buy" ? "▲ BUY / LONG" : "▼ SELL / SHORT"}
+                {s === "buy" ? t('portfolio.buyLong') : t('portfolio.sellShort')}
               </button>
             ))}
           </div>
@@ -392,18 +392,18 @@ export default function PortfolioView({ availableStocks, portfolio, fetchPortfol
           {/* Symbol dropdown */}
           <div>
             <span style={LABEL}>Symbol</span>
-            <SymbolSearchModal availableStocks={availableStocks} watchlist={watchlist} value={ticker} onChange={setTicker} onTogglePin={onTogglePin} />
+            <SymbolSearchModal availableStocks={availableStocks} watchlist={watchlist} value={ticker} onChange={setTicker} onTogglePin={onTogglePin} t={t} />
           </div>
 
           {/* Mini price card */}
           {selectedWl && (
             <div style={{ background: "var(--tv-bg2)", border: "1px solid var(--tv-border)", borderRadius: 8, padding: "10px 14px", display: "flex", justifyContent: "space-between", alignItems: "center" }}>
               <div>
-                <div style={{ fontSize: 9, color: "var(--tv-text3)", textTransform: "uppercase", letterSpacing: "0.1em", marginBottom: 3 }}>Current Price</div>
+                <div style={{ fontSize: 9, color: "var(--tv-text3)", textTransform: "uppercase", letterSpacing: "0.1em", marginBottom: 3 }}>{t('portfolio.currentPrice')}</div>
                 <div style={{ fontSize: 18, fontWeight: 700, fontFamily: "monospace", color: "var(--tv-text)" }}>₹{selectedWl.price.toLocaleString("en-IN")}</div>
               </div>
               <div style={{ textAlign: "right" }}>
-                <div style={{ fontSize: 9, color: "var(--tv-text3)", textTransform: "uppercase", letterSpacing: "0.1em", marginBottom: 3 }}>24h Chg</div>
+                <div style={{ fontSize: 9, color: "var(--tv-text3)", textTransform: "uppercase", letterSpacing: "0.1em", marginBottom: 3 }}>{t('portfolio.chg24h')}</div>
                 <div style={{ fontSize: 14, fontWeight: 700, color: selectedWl.trend === "up" ? "#089981" : "#F23645" }}>
                   {selectedWl.pct > 0 ? "+" : ""}{selectedWl.pct.toFixed(3)}%
                 </div>
@@ -416,7 +416,7 @@ export default function PortfolioView({ availableStocks, portfolio, fetchPortfol
 
           {/* Quantity */}
           <div>
-            <span style={LABEL}>Quantity</span>
+              <span style={LABEL}>{t('portfolio.quantity')}</span>
             <div style={{ display: "flex", alignItems: "center", gap: 4, marginBottom: 8 }}>
               <button onClick={() => setQty(q => Math.max(1, q - 10))} style={{ width: 28, height: 28, background: "transparent", border: "1px solid var(--tv-border)", color: "var(--tv-text2)", borderRadius: 8, cursor: "pointer", fontSize: 12 }}>−−</button>
               <button onClick={() => setQty(q => Math.max(1, q - 1))} style={{ width: 28, height: 28, background: "transparent", border: "1px solid var(--tv-border)", color: "var(--tv-text2)", borderRadius: 8, cursor: "pointer", fontSize: 16 }}>−</button>
@@ -440,7 +440,7 @@ export default function PortfolioView({ availableStocks, portfolio, fetchPortfol
           {/* Simulation period */}
           <div>
             <div style={{ display: "flex", justifyContent: "space-between", marginBottom: 7 }}>
-              <span style={LABEL}>Simulation Period</span>
+              <span style={LABEL}>{t('portfolio.simulationPeriod')}</span>
               <span style={{ fontSize: 11, color: "var(--tv-text3)", fontFamily: "monospace" }}>{simDays}d</span>
             </div>
             <input type="range" min={5} max={60} step={5} value={simDays}
@@ -459,13 +459,13 @@ export default function PortfolioView({ availableStocks, portfolio, fetchPortfol
           {/* Strategy readout */}
           <div style={{ background: "var(--tv-bg2)", border: "1px solid var(--tv-border)", borderRadius: 8, padding: "10px 14px" }}>
             <div style={{ display: "flex", justifyContent: "space-between", marginBottom: 5 }}>
-              <span style={{ fontSize: 9, color: "var(--tv-text3)", textTransform: "uppercase", letterSpacing: "0.1em" }}>Strategy</span>
+              <span style={{ fontSize: 9, color: "var(--tv-text3)", textTransform: "uppercase", letterSpacing: "0.1em" }}>{t('portfolio.strategy')}</span>
               <span style={{ fontSize: 11, fontWeight: 700, color: side === "buy" ? "#089981" : "#F23645" }}>
                 {side === "buy" ? "Auto-Scout (Buy)" : "Auto-Protect (Sell)"}
               </span>
             </div>
             <div style={{ display: "flex", justifyContent: "space-between" }}>
-              <span style={{ fontSize: 9, color: "var(--tv-text3)", textTransform: "uppercase", letterSpacing: "0.1em" }}>Mkt. Value Est.</span>
+              <span style={{ fontSize: 9, color: "var(--tv-text3)", textTransform: "uppercase", letterSpacing: "0.1em" }}>{t('portfolio.mktValueEst')}</span>
               <span style={{ fontSize: 11, fontFamily: "monospace", color: "var(--tv-text)" }}>
                 {selectedWl ? `₹${(selectedWl.price * qty).toLocaleString("en-IN", { minimumFractionDigits: 0 })}` : "—"}
               </span>
@@ -478,13 +478,13 @@ export default function PortfolioView({ availableStocks, portfolio, fetchPortfol
             background: side === "buy" ? "#089981" : "#F23645",
             color: "#fff", fontWeight: 700, fontSize: 13, cursor: loading ? "wait" : "pointer",
           }}>
-            {loading ? "Executing…" : side === "buy" ? "▲ Deploy AI Buy Bot" : "▼ Deploy AI Sell Bot"}
+            {loading ? t('portfolio.executing') : side === "buy" ? t('portfolio.deployBuy') : t('portfolio.deploySell')}
           </button>
         </div>
 
         {/* Footer summary */}
         <div style={{ padding: "12px 16px", borderTop: "1px solid var(--tv-border)", display: "grid", gridTemplateColumns: "1fr 1fr", gap: 12 }}>
-          {[["Open Positions", totalBots, "var(--tv-text)"], ["Fleet P&L", `₹${totalPnl.toFixed(0)}`, totalPnl >= 0 ? "#089981" : "#F23645"]].map(([label, value, color]) => (
+          {[[t('portfolio.openPositions'), totalBots, "var(--tv-text)"], [t('portfolio.fleetPnl'), `₹${totalPnl.toFixed(0)}`, totalPnl >= 0 ? "#089981" : "#F23645"]].map(([label, value, color]) => (
             <div key={label}>
               <div style={{ fontSize: 9, color: "var(--tv-text3)", textTransform: "uppercase", letterSpacing: "0.1em", marginBottom: 4 }}>{label}</div>
               <div style={{ fontSize: 17, fontWeight: 700, color, fontFamily: "monospace" }}>{value}</div>
@@ -497,7 +497,7 @@ export default function PortfolioView({ availableStocks, portfolio, fetchPortfol
       <div style={{ flex: 1, display: "flex", flexDirection: "column", overflow: "hidden", background: "var(--tv-bg)" }}>
         <div style={{ padding: "12px 18px", borderBottom: "1px solid var(--tv-border)", background: "var(--tv-bg)", display: "flex", justifyContent: "space-between", alignItems: "center", flexShrink: 0 }}>
           <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
-            <span style={{ fontSize: 11, color: "var(--tv-text2)", textTransform: "uppercase", letterSpacing: "0.1em", fontWeight: 700 }}>Active Positions &amp; AI Analysis</span>
+            <span style={{ fontSize: 11, color: "var(--tv-text2)", textTransform: "uppercase", letterSpacing: "0.1em", fontWeight: 700 }}>{t('portfolio.activePositionsAnalysis')}</span>
             {active_bots.length > 0 && (
               <span style={{ padding: "2px 9px", borderRadius: 12, background: "rgba(8,153,129,0.12)", border: "1px solid rgba(8,153,129,0.25)", color: "#089981", fontSize: 10, fontWeight: 600 }}>
                 {active_bots.length} open
@@ -517,18 +517,18 @@ export default function PortfolioView({ availableStocks, portfolio, fetchPortfol
         <div style={{ flex: 1, overflowY: "auto", padding: active_bots.length > 0 ? "12px 16px" : 0 }}>
           {active_bots.length === 0 ? (
             <div style={{ height: "100%", display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", gap: 14, color: "var(--tv-text3)" }}>
-              <div style={{ fontSize: 14, color: "var(--tv-text3)", fontWeight: 600 }}>No AI bots deployed</div>
+              <div style={{ fontSize: 14, color: "var(--tv-text3)", fontWeight: 600 }}>{t('portfolio.noAIBots')}</div>
               <div style={{ fontSize: 12, color: "var(--tv-text2)", textAlign: "center", maxWidth: 280 }}>
-                Deploy a bot from the left panel — each active position will show a live P&amp;L chart here.
+                {t('portfolio.deployHint')}
               </div>
               <div style={{ display: "flex", gap: 8 }}>
-                <span style={{ padding: "4px 12px", borderRadius: 16, background: "rgba(8,153,129,0.08)", border: "1px solid rgba(8,153,129,0.2)", color: "#089981", fontSize: 11 }}>▲ BUY — Auto-Scout</span>
-                <span style={{ padding: "4px 12px", borderRadius: 16, background: "rgba(242,54,69,0.08)", border: "1px solid rgba(242,54,69,0.2)", color: "#F23645", fontSize: 11 }}>▼ SELL — Auto-Protect</span>
+                <span style={{ padding: "4px 12px", borderRadius: 16, background: "rgba(8,153,129,0.08)", border: "1px solid rgba(8,153,129,0.2)", color: "#089981", fontSize: 11 }}>{t('portfolio.buyLong').replace(' / LONG', '')} — Auto-Scout</span>
+                <span style={{ padding: "4px 12px", borderRadius: 16, background: "rgba(242,54,69,0.08)", border: "1px solid rgba(242,54,69,0.2)", color: "#F23645", fontSize: 11 }}>{t('portfolio.sellShort').replace(' / SHORT', '')} — Auto-Protect</span>
               </div>
             </div>
           ) : (
             active_bots.map(bot => (
-              <BotCard key={bot.id} bot={bot} onTerminate={terminate} watchlist={watchlist} isAutoOpen={bot.id === expandBotId} />
+              <BotCard key={bot.id} bot={bot} onTerminate={terminate} watchlist={watchlist} isAutoOpen={bot.id === expandBotId} t={t} />
             ))
           )}
         </div>

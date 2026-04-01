@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { supabase } from '../supabaseClient';
+import { LANGUAGE_OPTIONS } from '../i18n';
 
 // --- Dummy Data ---
 const TICKER_DATA = [
@@ -12,7 +13,7 @@ const TICKER_DATA = [
   { sym: 'META', p: '500.40', c: '+2.1%' },
 ];
 
-export default function LandingPage({ onLogin, theme, toggleTheme }) {
+export default function LandingPage({ onLogin, theme, toggleTheme, language, onLanguageChange, t }) {
   const [view, setView] = useState(() => {
     return localStorage.getItem('hasAccount') ? 'login' : 'home';
   }); // home, about, contacts, login, signup
@@ -30,17 +31,17 @@ export default function LandingPage({ onLogin, theme, toggleTheme }) {
           onClick={() => setView('home')}
           style={{ cursor: 'pointer', display: 'flex', flexDirection: 'column' }}
         >
-          <span style={{ fontSize: 24, fontWeight: 800, color: 'var(--tv-text)', letterSpacing: '-0.04em' }}>IntelliTrail</span>
-          <span style={{ fontSize: 10, color: '#089981', textTransform: 'uppercase', letterSpacing: '0.25em', fontWeight: 700, marginTop: 2 }}>AI Engine</span>
+          <span style={{ fontSize: 24, fontWeight: 800, color: 'var(--tv-text)', letterSpacing: '-0.04em' }}>{t('app.name')}</span>
+          <span style={{ fontSize: 10, color: '#089981', textTransform: 'uppercase', letterSpacing: '0.25em', fontWeight: 700, marginTop: 2 }}>{t('app.aiEngine')}</span>
         </div>
 
         <div style={{ display: 'flex', gap: 35, fontSize: 14, fontWeight: 600 }}>
-          <button onClick={() => setView('home')} style={{ background: 'none', border: 'none', color: view === 'home' ? 'var(--tv-text)' : 'var(--tv-text2)', cursor: 'pointer', transition: 'color 0.2s', padding: 0 }}>Home</button>
-          <button onClick={() => setView('about')} style={{ background: 'none', border: 'none', color: view === 'about' ? 'var(--tv-text)' : 'var(--tv-text2)', cursor: 'pointer', transition: 'color 0.2s', padding: 0 }}>About</button>
-          <button onClick={() => setView('contacts')} style={{ background: 'none', border: 'none', color: view === 'contacts' ? 'var(--tv-text)' : 'var(--tv-text2)', cursor: 'pointer', transition: 'color 0.2s', padding: 0 }}>Contacts</button>
+          <button onClick={() => setView('home')} style={{ background: 'none', border: 'none', color: view === 'home' ? 'var(--tv-text)' : 'var(--tv-text2)', cursor: 'pointer', transition: 'color 0.2s', padding: 0 }}>{t('landing.home')}</button>
+          <button onClick={() => setView('about')} style={{ background: 'none', border: 'none', color: view === 'about' ? 'var(--tv-text)' : 'var(--tv-text2)', cursor: 'pointer', transition: 'color 0.2s', padding: 0 }}>{t('landing.about')}</button>
+          <button onClick={() => setView('contacts')} style={{ background: 'none', border: 'none', color: view === 'contacts' ? 'var(--tv-text)' : 'var(--tv-text2)', cursor: 'pointer', transition: 'color 0.2s', padding: 0 }}>{t('landing.contacts')}</button>
         </div>
 
-        <div style={{ display: 'flex', gap: 15, alignItems: 'center' }}>
+        <div style={{ display: 'flex', gap: 10, alignItems: 'center' }}>
           {/* Theme Toggle Component inside Landing Page */}
           <div onClick={toggleTheme} style={{ display: 'flex', alignItems: 'center', gap: 8, cursor: 'pointer', color: 'var(--tv-text2)', fontSize: 12, marginRight: 10 }}>
             <div style={{ width: 32, height: 18, background: theme === 'dark' ? 'var(--tv-bg3)' : 'var(--tv-border)', borderRadius: 10, position: 'relative', transition: 'background 0.3s' }}>
@@ -48,13 +49,38 @@ export default function LandingPage({ onLogin, theme, toggleTheme }) {
             </div>
           </div>
 
+          <select
+            value={language}
+            onChange={(e) => onLanguageChange(e.target.value)}
+            aria-label="Language"
+            title="Language"
+            style={{
+              border: '1px solid var(--tv-border)',
+              background: 'var(--tv-bg2)',
+              color: 'var(--tv-text2)',
+              borderRadius: 999,
+              padding: '4px 8px',
+              fontSize: 10,
+              fontWeight: 700,
+              width: 56,
+              cursor: 'pointer',
+              outline: 'none',
+              appearance: 'none',
+              textAlign: 'center',
+            }}
+          >
+            {LANGUAGE_OPTIONS.map((opt) => (
+              <option key={opt.value} value={opt.value}>{opt.label}</option>
+            ))}
+          </select>
+
           <button 
             onClick={() => setView('login')}
             style={{ padding: '8px 24px', fontSize: 13, fontWeight: 600, color: 'var(--tv-text)', background: 'transparent', border: '1px solid var(--tv-border)', borderRadius: 24, cursor: 'pointer', transition: 'all 0.2s' }}
             onMouseEnter={e => e.currentTarget.style.borderColor = 'var(--tv-text3)'}
             onMouseLeave={e => e.currentTarget.style.borderColor = 'var(--tv-border)'}
           >
-            Login
+            {t('landing.login')}
           </button>
           <button 
             onClick={() => setView('signup')}
@@ -62,17 +88,17 @@ export default function LandingPage({ onLogin, theme, toggleTheme }) {
             onMouseEnter={e => e.currentTarget.style.background = '#0aab91'}
             onMouseLeave={e => e.currentTarget.style.background = '#089981'}
           >
-            Sign Up
+            {t('landing.signup')}
           </button>
         </div>
       </nav>
 
       {/* Main Content Area */}
       <div style={{ position: 'relative', zIndex: 10, display: 'flex', flexDirection: 'column', minHeight: 'calc(100vh - 80px)' }}>
-        {view === 'home' && <HomeView onGetStarted={() => setView('signup')} />}
-        {view === 'about' && <AboutView />}
-        {view === 'contacts' && <ContactsView />}
-        {(view === 'login' || view === 'signup') && <AuthForm type={view} onSwitch={setView} onAuthSuccess={onLogin} />}
+        {view === 'home' && <HomeView onGetStarted={() => setView('signup')} t={t} />}
+        {view === 'about' && <AboutView t={t} />}
+        {view === 'contacts' && <ContactsView t={t} />}
+        {(view === 'login' || view === 'signup') && <AuthForm type={view} onSwitch={setView} onAuthSuccess={onLogin} t={t} />}
       </div>
 
     </div>
@@ -81,22 +107,22 @@ export default function LandingPage({ onLogin, theme, toggleTheme }) {
 
 // ── SUBCOMPONENTS ──
 
-function HomeView({ onGetStarted }) {
+function HomeView({ onGetStarted, t }) {
   return (
     <div style={{ flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', textAlign: 'center', padding: '60px 20px' }}>
       <div style={{ padding: '6px 16px', background: 'rgba(8,153,129,0.1)', border: '1px solid rgba(8,153,129,0.2)', borderRadius: 30, color: '#089981', fontSize: 12, fontWeight: 600, marginBottom: 30 }}>
-        Next Generation Algorithmic Trading
+        {t('landing.heroBadge')}
       </div>
       
       <h1 style={{ fontSize: 72, fontWeight: 800, color: 'var(--tv-text)', lineHeight: 1.1, letterSpacing: '-0.04em', maxWidth: 800, marginBottom: 24 }}>
-        Trade Smarter with<br />
+        {t('landing.heroTitleTop')}<br />
         <span style={{ background: 'linear-gradient(90deg, #089981, #2962ff)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}>
-          AI-Driven Insights
+          {t('landing.heroTitleBottom')}
         </span>
       </h1>
       
       <p style={{ fontSize: 18, color: 'var(--tv-text2)', maxWidth: 650, lineHeight: 1.6, marginBottom: 40, fontWeight: 500 }}>
-        IntelliTrail decodes market complexity. Execute algorithmic strategies effortlessly and monitor your portfolio with zero latency real-time insights.
+        {t('landing.heroSub')}
       </p>
 
       <button 
@@ -105,7 +131,7 @@ function HomeView({ onGetStarted }) {
         onMouseEnter={e => e.currentTarget.style.transform = 'translateY(-2px)'}
         onMouseLeave={e => e.currentTarget.style.transform = 'translateY(0)'}
       >
-        Start Trading Now
+        {t('landing.heroCta')}
       </button>
 
       {/* Ticker Tape Animation */}
@@ -129,44 +155,44 @@ function HomeView({ onGetStarted }) {
   );
 }
 
-function AboutView() {
+function AboutView({ t }) {
   return (
     <div style={{ flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '60px 20px' }}>
       <div style={{ maxWidth: 800, background: 'var(--tv-bg2)', border: '1px solid var(--tv-border)', borderRadius: 24, padding: 50, backdropFilter: 'blur(20px)' }}>
-        <h2 style={{ fontSize: 36, fontWeight: 700, color: 'var(--tv-text)', marginBottom: 24, letterSpacing: '-0.02em' }}>About IntelliTrail</h2>
+        <h2 style={{ fontSize: 36, fontWeight: 700, color: 'var(--tv-text)', marginBottom: 24, letterSpacing: '-0.02em' }}>{t('landing.aboutTitle')}</h2>
         <p style={{ fontSize: 16, color: 'var(--tv-text2)', lineHeight: 1.7, marginBottom: 20 }}>
-          IntelliTrail was born from a singular vision: to democratize advanced algorithmic trading. For too long, high-frequency quant strategies and machine learning models were exclusively the domain of Wall Street institutions.
+          {t('landing.aboutP1')}
         </p>
         <p style={{ fontSize: 16, color: 'var(--tv-text2)', lineHeight: 1.7 }}>
-          By leveraging cutting-edge web technologies and a powerful backend AI Engine, IntelliTrail bridges the gap, offering retail traders a lightning-fast interface to deploy, manage, and backtest automated trading strategies across global equity markets in real-time.
+          {t('landing.aboutP2')}
         </p>
       </div>
     </div>
   );
 }
 
-function ContactsView() {
+function ContactsView({ t }) {
   return (
     <div style={{ flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '60px 20px' }}>
       <div style={{ maxWidth: 600, width: '100%', background: 'var(--tv-bg2)', border: '1px solid var(--tv-border)', borderRadius: 24, padding: 50, backdropFilter: 'blur(20px)' }}>
-        <h2 style={{ fontSize: 32, fontWeight: 700, color: 'var(--tv-text)', marginBottom: 12, letterSpacing: '-0.02em' }}>Get in Touch</h2>
-        <p style={{ fontSize: 15, color: 'var(--tv-text2)', marginBottom: 30 }}>Have questions about our AI models or API access? Reach out to us.</p>
+        <h2 style={{ fontSize: 32, fontWeight: 700, color: 'var(--tv-text)', marginBottom: 12, letterSpacing: '-0.02em' }}>{t('landing.contactTitle')}</h2>
+        <p style={{ fontSize: 15, color: 'var(--tv-text2)', marginBottom: 30 }}>{t('landing.contactSub')}</p>
         
         <form onSubmit={e => e.preventDefault()}>
           <div style={{ marginBottom: 20 }}>
-            <label style={{ display: 'block', fontSize: 13, color: 'var(--tv-text2)', marginBottom: 8, fontWeight: 500 }}>Name</label>
+            <label style={{ display: 'block', fontSize: 13, color: 'var(--tv-text2)', marginBottom: 8, fontWeight: 500 }}>{t('landing.contactName')}</label>
             <input required type="text" placeholder="Jane Doe" style={{ width: '100%', padding: '14px 16px', borderRadius: 10, fontSize: 14 }} />
           </div>
           <div style={{ marginBottom: 20 }}>
-            <label style={{ display: 'block', fontSize: 13, color: 'var(--tv-text2)', marginBottom: 8, fontWeight: 500 }}>Email</label>
+            <label style={{ display: 'block', fontSize: 13, color: 'var(--tv-text2)', marginBottom: 8, fontWeight: 500 }}>{t('landing.contactEmail')}</label>
             <input required type="email" placeholder="jane@example.com" style={{ width: '100%', padding: '14px 16px', borderRadius: 10, fontSize: 14 }} />
           </div>
           <div style={{ marginBottom: 30 }}>
-            <label style={{ display: 'block', fontSize: 13, color: 'var(--tv-text2)', marginBottom: 8, fontWeight: 500 }}>Message</label>
+            <label style={{ display: 'block', fontSize: 13, color: 'var(--tv-text2)', marginBottom: 8, fontWeight: 500 }}>{t('landing.contactMessage')}</label>
             <textarea required rows="4" placeholder="How can we help?" style={{ width: '100%', padding: '14px 16px', background: 'var(--tv-bg)', border: '1px solid var(--tv-border)', borderRadius: 10, color: 'var(--tv-text)', fontSize: 14, fontFamily: 'inherit', resize: 'vertical' }} />
           </div>
           <button type="submit" style={{ width: '100%', padding: '16px', fontSize: 15, fontWeight: 600, color: '#fff', background: '#089981', border: 'none', borderRadius: 10, cursor: 'pointer' }}>
-            Send Message
+            {t('landing.contactSend')}
           </button>
         </form>
       </div>
@@ -175,7 +201,7 @@ function ContactsView() {
 }
 
 
-function AuthForm({ type, onSwitch, onAuthSuccess }) {
+function AuthForm({ type, onSwitch, onAuthSuccess, t }) {
   const isLogin = type === 'login';
   const [signupUsername, setSignupUsername] = useState('');
   const [signupFullName, setSignupFullName] = useState('');
@@ -231,15 +257,15 @@ function AuthForm({ type, onSwitch, onAuthSuccess }) {
     <div style={{ flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '60px 20px' }}>
       <form onSubmit={handleSubmit} style={{ width: '100%', maxWidth: 400, background: 'var(--tv-bg2)', border: '1px solid var(--tv-border)', borderRadius: 24, padding: 40, boxShadow: '0 25px 50px -12px rgba(0,0,0,0.5)' }}>
         <div style={{ textAlign: 'center', marginBottom: 32 }}>
-          <h2 style={{ fontSize: 28, fontWeight: 700, color: 'var(--tv-text)', marginBottom: 8, letterSpacing: '-0.02em' }}>{isLogin ? 'Welcome Back' : 'Create Account'}</h2>
+          <h2 style={{ fontSize: 28, fontWeight: 700, color: 'var(--tv-text)', marginBottom: 8, letterSpacing: '-0.02em' }}>{isLogin ? t('landing.authWelcome') : t('landing.authCreate')}</h2>
           <p style={{ fontSize: 14, color: 'var(--tv-text3)' }}>
-            {isLogin ? 'Enter your credentials to access your dashboard.' : 'Join IntelliTrail and start algorithmic trading.'}
+            {isLogin ? t('landing.authLoginSub') : t('landing.authSignupSub')}
           </p>
         </div>
 
         {!isLogin && (
           <div style={{ marginBottom: 20 }}>
-            <label style={{ display: 'block', fontSize: 13, color: 'var(--tv-text2)', marginBottom: 8, fontWeight: 500 }}>Full Name</label>
+            <label style={{ display: 'block', fontSize: 13, color: 'var(--tv-text2)', marginBottom: 8, fontWeight: 500 }}>{t('landing.fullName')}</label>
             <input
               required
               type="text"
@@ -253,20 +279,20 @@ function AuthForm({ type, onSwitch, onAuthSuccess }) {
 
         {!isLogin && (
           <div style={{ marginBottom: 20 }}>
-            <label style={{ display: 'block', fontSize: 13, color: 'var(--tv-text2)', marginBottom: 8, fontWeight: 500 }}>Username (Permanent)</label>
+            <label style={{ display: 'block', fontSize: 13, color: 'var(--tv-text2)', marginBottom: 8, fontWeight: 500 }}>{t('landing.username')}</label>
             <input
               required
               type="text"
               value={signupUsername}
               onChange={e => setSignupUsername(e.target.value)}
-              placeholder="archie_trader"
+              placeholder={t('landing.usernamePlaceholder')}
               style={{ width: '100%', padding: '14px 16px', borderRadius: 10, fontSize: 14 }}
             />
           </div>
         )}
 
         <div style={{ marginBottom: 20 }}>
-          <label style={{ display: 'block', fontSize: 13, color: 'var(--tv-text2)', marginBottom: 8, fontWeight: 500 }}>Email</label>
+          <label style={{ display: 'block', fontSize: 13, color: 'var(--tv-text2)', marginBottom: 8, fontWeight: 500 }}>{t('landing.email')}</label>
           <input
             required
             type="email"
@@ -278,7 +304,7 @@ function AuthForm({ type, onSwitch, onAuthSuccess }) {
         </div>
 
         <div style={{ marginBottom: 32 }}>
-          <label style={{ display: 'block', fontSize: 13, color: 'var(--tv-text2)', marginBottom: 8, fontWeight: 500 }}>Password</label>
+          <label style={{ display: 'block', fontSize: 13, color: 'var(--tv-text2)', marginBottom: 8, fontWeight: 500 }}>{t('landing.password')}</label>
           <input
             required
             type="password"
@@ -294,16 +320,16 @@ function AuthForm({ type, onSwitch, onAuthSuccess }) {
         <button type="submit" disabled={loading} style={{ width: '100%', padding: '16px', fontSize: 15, fontWeight: 600, color: '#fff', background: loading ? '#ccc' : '#089981', border: 'none', borderRadius: 10, cursor: loading ? 'not-allowed' : 'pointer', marginBottom: 24, transition: 'all 0.2s' }}
           onMouseEnter={e => { if (!loading) e.currentTarget.style.background = '#0aab91'; }}
           onMouseLeave={e => { if (!loading) e.currentTarget.style.background = loading ? '#ccc' : '#089981'; }}>
-          {loading ? (isLogin ? 'Signing In...' : 'Signing Up...') : (isLogin ? 'Sign In' : 'Sign Up')}
+          {loading ? (isLogin ? `${t('landing.loginButton')}...` : `${t('landing.signupButton')}...`) : (isLogin ? t('landing.loginButton') : t('landing.signupButton'))}
         </button>
 
         <div style={{ textAlign: 'center', fontSize: 14, color: 'var(--tv-text3)' }}>
-          {isLogin ? "Don't have an account? " : "Already have an account? "}
+          {isLogin ? `${t('landing.switchToSignup').split('?')[0]}? ` : `${t('landing.switchToLogin').split('?')[0]}? `}
           <span 
             onClick={() => !loading && onSwitch(isLogin ? 'signup' : 'login')}
             style={{ color: '#089981', cursor: loading ? 'not-allowed' : 'pointer', fontWeight: 600 }}
           >
-            {isLogin ? 'Sign up' : 'Log in'}
+            {isLogin ? t('landing.signup') : t('landing.login')}
           </span>
         </div>
       </form>

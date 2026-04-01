@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef } from "react";
 import CandlestickChart from "./CandlestickChart";
 import { getStockData, getAnalysis, getWatchlist, deployBot, terminateBot, getPortfolio } from "../api";
+import { LANGUAGE_OPTIONS } from "../i18n";
 
 const TF = ["1m", "5m", "15m", "1H", "4H", "1D", "1W"];
 const TF_MAP = { "1m": "minute", "5m": "minute", "15m": "minute", "1H": "minute", "4H": "daily", "1D": "daily", "1W": "daily" };
@@ -40,7 +41,7 @@ const PinIcon = ({ pinned }) => (
 );
 
 /* ── Symbol Search Modal ── */
-function SymbolSearchModal({ availableStocks, watchlist, value, onChange, onTogglePin }) {
+function SymbolSearchModal({ availableStocks, watchlist, value, onChange, onTogglePin, t }) {
   const [open, setOpen] = useState(false);
   const [query, setQuery] = useState("");
 
@@ -77,7 +78,7 @@ function SymbolSearchModal({ availableStocks, watchlist, value, onChange, onTogg
         borderRadius: 20, cursor: "pointer", color: "var(--tv-text)", fontSize: 14, fontWeight: 700,
         display: "flex", alignItems: "center", transition: "background 0.2s"
       }} onMouseOver={e => e.currentTarget.style.background = "var(--tv-bg3)"} onMouseOut={e => e.currentTarget.style.background = "transparent"}>
-        {value || "Select symbol"}
+        {value || t('analytics.selectSymbol')}
       </button>
 
       {open && (
@@ -93,7 +94,7 @@ function SymbolSearchModal({ availableStocks, watchlist, value, onChange, onTogg
           }}>
             <div style={{ padding: "12px 16px 0", background: "var(--tv-bg)" }}>
               <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 12 }}>
-                <div style={{ fontSize: 16, fontWeight: 600, color: "var(--tv-text)" }}>Symbol Search</div>
+                <div style={{ fontSize: 16, fontWeight: 600, color: "var(--tv-text)" }}>{t('analytics.symbolSearch')}</div>
                 <button onClick={() => setOpen(false)} style={{ background: "none", border: "none", color: "var(--tv-text2)", cursor: "pointer", fontSize: 18 }}>
                   <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
                 </button>
@@ -103,7 +104,7 @@ function SymbolSearchModal({ availableStocks, watchlist, value, onChange, onTogg
                   <SearchIcon />
                 </span>
                 <input autoFocus value={query} onChange={e => setQuery(e.target.value)}
-                  placeholder="Search"
+                  placeholder={t('analytics.search')}
                   style={{
                     width: "100%", background: "var(--tv-bg2)", border: "1px solid var(--tv-border)", borderRadius: 8,
                     padding: "10px 40px", color: "var(--tv-text)", fontSize: 14, outline: "none", boxSizing: "border-box",
@@ -136,7 +137,7 @@ function SymbolSearchModal({ availableStocks, watchlist, value, onChange, onTogg
                     </div>
 
                     <div style={{ display: "flex", alignItems: "center", gap: 16 }}>
-                      <div style={{ fontSize: 12, color: "var(--tv-text3)" }}>stock</div>
+                      <div style={{ fontSize: 12, color: "var(--tv-text3)" }}>{t('analytics.stock')}</div>
                       <button onClick={(e) => { e.stopPropagation(); onTogglePin(w.ticker); }} style={{ background: "none", border: "none", cursor: "pointer", display: "flex", alignItems: "center", padding: 4 }}>
                         <PinIcon pinned={w.is_pinned} />
                       </button>
@@ -222,7 +223,7 @@ function SplitMetricRows({ rows }) {
   );
 }
 
-export default function AnalyticsView({ availableStocks, activeStock, setActiveStock, watchlist, onTogglePin, theme, onToggleTheme }) {
+export default function AnalyticsView({ availableStocks, activeStock, setActiveStock, watchlist, onTogglePin, theme, onToggleTheme, language, onLanguageChange, t, locale }) {
   const [tf, setTf] = useState("1m");
   const [stockData, setStockData] = useState(null);
   const [analysis, setAnalysis] = useState(null);
@@ -263,7 +264,7 @@ export default function AnalyticsView({ availableStocks, activeStock, setActiveS
     try {
       await deployBot(activeStock, side === "buy" ? "Auto-Scout (Buy)" : "Auto-Protect (Sell)", quantity, simDays);
       setPortfolio(await getPortfolio());
-    } catch (e) { alert("Order failed."); }
+    } catch (e) { alert(t('portfolio.orderFailed') || "Order failed."); }
     setOrderLoading(false);
   };
 
@@ -275,7 +276,7 @@ export default function AnalyticsView({ availableStocks, activeStock, setActiveS
   const an = analysis;
   const currentWl = watchlist.find(w => w.ticker === activeStock);
   const bullish = m?.trend === "Bullish";
-  const timeText = liveTime.toLocaleTimeString("en-IN", {
+  const timeText = liveTime.toLocaleTimeString(locale || "en-IN", {
     hour: "2-digit",
     minute: "2-digit",
     second: "2-digit",
@@ -288,7 +289,7 @@ export default function AnalyticsView({ availableStocks, activeStock, setActiveS
 
       {/* ── TOOLBAR ── */}
       <div style={{ display: "flex", alignItems: "center", gap: 6, padding: "0 12px", height: 38, flexShrink: 0, borderBottom: "1px solid var(--tv-border)", background: "var(--tv-bg2)" }}>
-        <SymbolSearchModal availableStocks={availableStocks} watchlist={watchlist} value={activeStock} onChange={setActiveStock} onTogglePin={onTogglePin} />
+        <SymbolSearchModal availableStocks={availableStocks} watchlist={watchlist} value={activeStock} onChange={setActiveStock} onTogglePin={onTogglePin} t={t} />
         <div style={{ width: 1, height: 16, background: "var(--tv-border)", margin: "0 6px", flexShrink: 0 }} />
         <div style={{ display: "flex", gap: 3 }}>
           {TF.map(t => (
@@ -297,11 +298,35 @@ export default function AnalyticsView({ availableStocks, activeStock, setActiveS
         </div>
         <div style={{ width: 1, height: 16, background: "var(--tv-border)", margin: "0 6px", flexShrink: 0 }} />
         <div style={{ display: "flex", gap: 10, alignItems: "center" }}>
-          {[["▲ Bull", "#089981"], ["▼ Bear", "#F23645"], ["SMA20", "#2962ff"], ["SMA50", "#f39c12"], ["BB", "#7864c8"]].map(([label, color]) => (
+          {[[t('analytics.bull'), "#089981"], [t('analytics.bear'), "#F23645"], ["SMA20", "#2962ff"], ["SMA50", "#f39c12"], ["BB", "#7864c8"]].map(([label, color]) => (
             <span key={label} style={{ fontSize: 10, color, opacity: 0.8 }}>{label}</span>
           ))}
         </div>
-        <div style={{ marginLeft: "auto", display: "flex", alignItems: "center", gap: 10 }}>
+        <div style={{ marginLeft: "auto", display: "flex", alignItems: "center", gap: 8 }}>
+          <select
+            value={language}
+            onChange={(e) => onLanguageChange(e.target.value)}
+            aria-label="Language"
+            title="Language"
+            style={{
+              border: "1px solid var(--tv-border)",
+              background: "var(--tv-bg3)",
+              color: "var(--tv-text2)",
+              borderRadius: 12,
+              padding: "3px 6px",
+              fontSize: 10,
+              fontWeight: 700,
+              width: 56,
+              cursor: "pointer",
+              outline: "none",
+              appearance: "none",
+              textAlign: "center",
+            }}
+          >
+            {LANGUAGE_OPTIONS.map((opt) => (
+              <option key={opt.value} value={opt.value}>{opt.label}</option>
+            ))}
+          </select>
           <button
             onClick={onToggleTheme}
             style={{
@@ -316,7 +341,7 @@ export default function AnalyticsView({ availableStocks, activeStock, setActiveS
               letterSpacing: "0.08em",
             }}
           >
-            {theme === "dark" ? "DARK" : "LIGHT"}
+            {theme === "dark" ? t('analytics.dark') : t('analytics.light')}
           </button>
           <div style={{ fontSize: 11, color: "var(--tv-text2)", fontFamily: "monospace", letterSpacing: "0.04em" }}>
             {timeText} IST
@@ -331,12 +356,12 @@ export default function AnalyticsView({ availableStocks, activeStock, setActiveS
           <div style={{ flex: 1, minHeight: 0, overflow: "hidden" }}>
             {loading ? (
               <div style={{ height: "100%", display: "flex", alignItems: "center", justifyContent: "center", color: "var(--tv-text3)", fontSize: 12 }}>
-                Loading {activeStock}…
+                {t('analytics.loading', { symbol: activeStock })}
               </div>
             ) : stockData?.chart_data ? (
               <CandlestickChart chartData={stockData.chart_data} ticker={activeStock} metrics={m} changePct={currentWl?.pct} theme={theme} />
             ) : (
-              <div style={{ height: "100%", display: "flex", alignItems: "center", justifyContent: "center", color: "var(--tv-text3)", fontSize: 12 }}>Select a symbol</div>
+              <div style={{ height: "100%", display: "flex", alignItems: "center", justifyContent: "center", color: "var(--tv-text3)", fontSize: 12 }}>{t('analytics.noSymbol')}</div>
             )}
           </div>
         </div>
@@ -352,13 +377,13 @@ export default function AnalyticsView({ availableStocks, activeStock, setActiveS
                 background: rightTab === "watchlist" ? "var(--tv-text)" : "transparent",
                 border: "none", borderRadius: 4, color: rightTab === "watchlist" ? "var(--tv-bg)" : "var(--tv-text2)",
                 transition: "all 0.15s", outline: "none"
-              }}>Watchlist</button>
+              }}>{t('analytics.watchlist')}</button>
               <button onClick={() => setRightTab("analysis")} style={{
                 flex: 1, padding: "6px 0", cursor: "pointer", fontSize: 13, fontWeight: 600,
                 background: rightTab === "analysis" ? "var(--tv-text)" : "transparent",
                 border: "none", borderRadius: 4, color: rightTab === "analysis" ? "var(--tv-bg)" : "var(--tv-text2)",
                 transition: "all 0.15s", outline: "none"
-              }}>Analysis</button>
+              }}>{t('analytics.analysis')}</button>
             </div>
           </div>
 
@@ -369,7 +394,7 @@ export default function AnalyticsView({ availableStocks, activeStock, setActiveS
               <div style={{ padding: 12, flex: 1 }}>
                 {/* Sentiment Header */}
                 <div style={{ fontSize: 9, color: "var(--tv-text3)", textTransform: "uppercase", letterSpacing: "0.12em", fontWeight: 700, marginBottom: 8 }}>
-                  Market Sentiment
+                  {t('analytics.marketSentiment')}
                 </div>
                 <div style={{ borderTop: "1px solid var(--tv-border)", borderBottom: "1px solid var(--tv-border)", padding: "10px 0", marginBottom: 16 }}>
                   <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
@@ -377,8 +402,8 @@ export default function AnalyticsView({ availableStocks, activeStock, setActiveS
                     <SplitMetricRows
                       rows={[
                         [
-                          { label: "Trend", value: an.technical.trend, sub: an.technical.trend_signal, color: an.technical.trend === "Bullish" ? "#089981" : "#F23645" },
-                          { label: "Total Ret", value: `${an.performance.total_return > 0 ? "+" : ""}${an.performance.total_return?.toFixed(2)}%`, color: an.performance.total_return >= 0 ? "#089981" : "#F23645" },
+                          { label: t('stats.trend'), value: an.technical.trend, sub: an.technical.trend_signal, color: an.technical.trend === "Bullish" ? "#089981" : "#F23645" },
+                          { label: t('portfolio.return'), value: `${an.performance.total_return > 0 ? "+" : ""}${an.performance.total_return?.toFixed(2)}%`, color: an.performance.total_return >= 0 ? "#089981" : "#F23645" },
                         ],
                       ]}
                     />
@@ -387,7 +412,7 @@ export default function AnalyticsView({ availableStocks, activeStock, setActiveS
 
                 {/* Technical Indicators Header */}
                 <div style={{ fontSize: 9, color: "var(--tv-text3)", textTransform: "uppercase", letterSpacing: "0.12em", fontWeight: 700, marginBottom: 8 }}>
-                  Technical Indicators
+                  {t('analytics.technicalIndicators')}
                 </div>
                 <div style={{ borderTop: "1px solid var(--tv-border)", borderBottom: "1px solid var(--tv-border)", padding: "10px 0", marginBottom: 16 }}>
                   <SplitMetricRows
@@ -419,12 +444,12 @@ export default function AnalyticsView({ availableStocks, activeStock, setActiveS
                 <div style={{ borderTop: "1px solid var(--tv-border)", borderBottom: "1px solid var(--tv-border)", padding: "10px 0" }}>
                   <div style={{ padding: "12px 14px", background: "var(--tv-bg)", borderRadius: 8, display: "flex", alignItems: "center", justifyContent: "space-between" }}>
                     <div>
-                      <div style={{ fontSize: 9, color: "var(--tv-text3)", textTransform: "uppercase", letterSpacing: "0.1em", marginBottom: 4 }}>Forecasted Next Close</div>
+                      <div style={{ fontSize: 9, color: "var(--tv-text3)", textTransform: "uppercase", letterSpacing: "0.1em", marginBottom: 4 }}>{t('analytics.forecastedNextClose')}</div>
                       <div style={{ fontSize: 20, fontWeight: 700, fontFamily: "monospace", color: an.ai.direction === "UP" ? "#089981" : "#F23645" }}>
                         ₹{an.ai.prediction?.toLocaleString("en-IN", { minimumFractionDigits: 2 })}
                       </div>
                       <div style={{ fontSize: 10, color: "var(--tv-text2)", marginTop: 2 }}>
-                        {an.ai.direction === "UP" ? "▲" : "▼"} Expected {an.ai.confidence?.toFixed(1)}% Delta
+                        {an.ai.direction === "UP" ? "▲" : "▼"} {t('analytics.expectedDelta', { value: an.ai.confidence?.toFixed(1) })}
                       </div>
                     </div>
                     <span style={{
@@ -441,7 +466,7 @@ export default function AnalyticsView({ availableStocks, activeStock, setActiveS
             {/* ── WATCHLIST ── */}
             {rightTab === "watchlist" && (
               <div style={{ flex: 1, display: "flex", flexDirection: "column" }}>
-                <div style={{ display: "grid", gridTemplateColumns: "1fr auto", padding: "6px 14px", fontSize: 9, color: "var(--tv-text3)", borderBottom: "1px solid var(--tv-border)", textTransform: "uppercase", fontWeight: 700, letterSpacing: "0.1em" }}><span>Symbol</span><span>Last Price</span></div>
+                <div style={{ display: "grid", gridTemplateColumns: "1fr auto", padding: "6px 14px", fontSize: 9, color: "var(--tv-text3)", borderBottom: "1px solid var(--tv-border)", textTransform: "uppercase", fontWeight: 700, letterSpacing: "0.1em" }}><span>{t('analytics.watchlistSymbol')}</span><span>{t('analytics.watchlistPrice')}</span></div>
                 <div style={{ flex: 1, overflowY: "auto" }}>
                   {watchlist.filter(w => w.is_pinned).map(w => (
                     <button key={w.ticker} onClick={() => setActiveStock(w.ticker)} style={{
@@ -450,7 +475,7 @@ export default function AnalyticsView({ availableStocks, activeStock, setActiveS
                     }}>
                       <div>
                         <div style={{ fontSize: 13, fontWeight: 600, color: activeStock === w.ticker ? "#089981" : "var(--tv-text)", textAlign: "left" }}>{w.ticker}</div>
-                        <div style={{ fontSize: 11, color: "var(--tv-text2)", textAlign: "left", marginTop: 2 }}>Stock</div>
+                        <div style={{ fontSize: 11, color: "var(--tv-text2)", textAlign: "left", marginTop: 2 }}>{t('analytics.stock')}</div>
                       </div>
                       <div style={{ textAlign: "right", alignSelf: "center" }}>
                         <div style={{ fontSize: 12, fontFamily: "monospace", color: "var(--tv-text)", fontWeight: 500 }}>₹{w.price.toLocaleString("en-IN")}</div>
@@ -467,18 +492,18 @@ export default function AnalyticsView({ availableStocks, activeStock, setActiveS
             {/* ── POSITIONS ── */}
             {portfolio.active_bots.length > 0 && <>
               <div style={{ padding: "6px 14px", borderTop: "1px solid var(--tv-border)", borderBottom: "1px solid var(--tv-border)", fontSize: 9, color: "var(--tv-text3)", textTransform: "uppercase", letterSpacing: "0.1em", fontWeight: 700 }}>
-                Positions ({portfolio.active_bots.length})
+                {t('analytics.positions', { count: portfolio.active_bots.length })}
               </div>
               <div style={{ maxHeight: 160, overflowY: "auto", flexShrink: 0 }}>
                 {portfolio.active_bots.map(bot => (
                   <div key={bot.id} style={{ padding: "8px 14px", borderBottom: "1px solid var(--tv-border)", display: "flex", justifyContent: "space-between" }}>
                     <div>
                       <div style={{ fontSize: 12, fontWeight: 700, color: "var(--tv-text)" }}>{bot.ticker}</div>
-                      <div style={{ fontSize: 11, color: bot.strat.includes("Buy") ? "#089981" : "#F23645", marginTop: 2 }}>{bot.strat.includes("Buy") ? "LONG" : "SHORT"} · {bot.qty}</div>
+                      <div style={{ fontSize: 11, color: bot.strat.includes("Buy") ? "#089981" : "#F23645", marginTop: 2 }}>{bot.strat.includes("Buy") ? t('portfolio.buyLabel') : t('portfolio.sellLabel')} · {bot.qty}</div>
                     </div>
                     <div style={{ textAlign: "right" }}>
                       <div style={{ fontSize: 12, fontWeight: 700, fontFamily: "monospace", color: bot.pnl >= 0 ? "#089981" : "#F23645" }}>{bot.pnl >= 0 ? "+" : ""}₹{bot.pnl?.toFixed(0)}</div>
-                      <button onClick={() => terminate(bot.id)} style={{ fontSize: 11, color: "#F23645", background: "none", border: "none", cursor: "pointer", padding: 0, marginTop: 4 }}>Close</button>
+                      <button onClick={() => terminate(bot.id)} style={{ fontSize: 11, color: "#F23645", background: "none", border: "none", cursor: "pointer", padding: 0, marginTop: 4 }}>{t('analytics.close')}</button>
                     </div>
                   </div>
                 ))}
@@ -497,34 +522,34 @@ export default function AnalyticsView({ availableStocks, activeStock, setActiveS
               background: side === s ? (s === "buy" ? "#089981" : "#F23645") : "transparent",
               color: side === s ? "#fff" : "var(--tv-text2)", transition: "all .15s"
             }}>
-              {s === "buy" ? "BUY" : "SELL"}
+              {s === "buy" ? t('analytics.buy') : t('analytics.sell')}
             </button>
           ))}
         </div>
         <div style={{ display: "flex", alignItems: "center", gap: 4, flexShrink: 0 }}>
-          <span style={{ fontSize: 9, color: "var(--tv-text3)", textTransform: "uppercase", letterSpacing: "0.1em" }}>Qty</span>
+          <span style={{ fontSize: 9, color: "var(--tv-text3)", textTransform: "uppercase", letterSpacing: "0.1em" }}>{t('portfolio.quantity')}</span>
           <button onClick={() => setQuantity(q => Math.max(1, q - 1))} style={{ width: 22, height: 22, background: "transparent", border: "1px solid var(--tv-border)", color: "var(--tv-text)", borderRadius: 6, cursor: "pointer" }}>−</button>
           <input type="number" value={quantity} min={1} onChange={e => setQuantity(Math.max(1, parseInt(e.target.value) || 1))}
             style={{ width: 48, height: 24, textAlign: "center", background: "transparent", border: "1px solid var(--tv-border)", borderRadius: 6, color: "var(--tv-text)", fontSize: 12 }} />
           <button onClick={() => setQuantity(q => q + 1)} style={{ width: 22, height: 22, background: "transparent", border: "1px solid var(--tv-border)", color: "var(--tv-text)", borderRadius: 6, cursor: "pointer" }}>+</button>
         </div>
         <div style={{ display: "flex", alignItems: "center", gap: 6, flexShrink: 0 }}>
-          <span style={{ fontSize: 9, color: "var(--tv-text3)", textTransform: "uppercase", letterSpacing: "0.1em" }}>Sim</span>
+          <span style={{ fontSize: 9, color: "var(--tv-text3)", textTransform: "uppercase", letterSpacing: "0.1em" }}>{t('portfolio.simulationPeriod')}</span>
           <input type="range" min={5} max={90} step={5} value={simDays} onChange={e => setSimDays(Number(e.target.value))} style={{ width: 80 }} />
           <span style={{ fontSize: 11, color: "var(--tv-text2)", fontFamily: "monospace", minWidth: 28 }}>{simDays}d</span>
         </div>
         <span style={{ fontSize: 11, color: "var(--tv-text3)" }}>
-          Strategy: <span style={{ color: side === "buy" ? "#089981" : "#F23645", fontWeight: 600 }}>{side === "buy" ? "Auto-Scout (Buy)" : "Auto-Protect (Sell)"}</span>
+          {t('portfolio.strategy')}: <span style={{ color: side === "buy" ? "#089981" : "#F23645", fontWeight: 600 }}>{side === "buy" ? "Auto-Scout (Buy)" : "Auto-Protect (Sell)"}</span>
         </span>
         <button onClick={exec} disabled={orderLoading} style={{
           marginLeft: "auto", padding: "7px 20px", borderRadius: 20, border: "none",
           background: side === "buy" ? "#089981" : "#F23645",
           color: "#fff", fontWeight: 700, fontSize: 12, cursor: orderLoading ? "wait" : "pointer", flexShrink: 0,
         }}>
-          {orderLoading ? "Executing…" : side === "buy" ? "▲ Execute Buy" : "▼ Execute Sell"}
+          {orderLoading ? t('analytics.executing') : side === "buy" ? t('analytics.deployBuy') : t('analytics.deploySell')}
         </button>
         <div style={{ textAlign: "right", flexShrink: 0 }}>
-          <div style={{ fontSize: 9, color: "var(--tv-text3)", textTransform: "uppercase", letterSpacing: "0.1em" }}>Fleet P&amp;L</div>
+          <div style={{ fontSize: 9, color: "var(--tv-text3)", textTransform: "uppercase", letterSpacing: "0.1em" }}>{t('portfolio.fleetPnl')}</div>
           <div style={{ fontSize: 13, fontWeight: 700, fontFamily: "monospace", color: (portfolio.summary?.total_pnl || 0) >= 0 ? "#089981" : "#F23645" }}>
             ₹{(portfolio.summary?.total_pnl || 0).toFixed(0)}
           </div>

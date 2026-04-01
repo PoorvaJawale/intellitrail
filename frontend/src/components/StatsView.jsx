@@ -14,7 +14,7 @@ const tdS = (opts={}) => ({
   textAlign:opts.right?'right':'left', whiteSpace:'nowrap',
 });
 
-export default function StatsView({ portfolio }) {
+export default function StatsView({ portfolio, t }) {
   const { summary={}, active_bots=[] } = portfolio;
   const [watchlist, setWatchlist] = useState([]);
   const [showAllMarketOverview, setShowAllMarketOverview] = useState(false);
@@ -30,10 +30,10 @@ export default function StatsView({ portfolio }) {
       {/* ── Summary strip ── */}
       <div style={{ display:'grid', gridTemplateColumns:'repeat(4,1fr)', gap:10, marginBottom:16 }}>
         {[
-          { label:'Open Positions',   value: openBots,       sub: openBots===0?'No active orders':'AI-managed', color:'var(--tv-text)',     subColor:'var(--tv-text3)' },
-          { label:'Shares Deployed',  value: summary.total_qty||0, sub:'Total units',  color:'var(--tv-text)',     subColor:'var(--tv-text3)' },
-          { label:'Total P&L',        value:`₹${pnl.toFixed(2)}`, sub: pnl>=0?'In profit':'In loss', color:pnl>=0?'#089981':'#F23645', subColor:pnl>=0?'rgba(8,153,129,0.5)':'rgba(242,54,69,0.5)', mono:true },
-          { label:'System Status',    value: summary.status||'STANDBY', sub: openBots>0?'AI active':'Awaiting orders', color:openBots>0?'#089981':'var(--tv-text2)', subColor:'var(--tv-text3)' },
+          { label:t('stats.openPositions'),   value: openBots,       sub: openBots===0?t('stats.noActiveOrders'):t('stats.aiManaged'), color:'var(--tv-text)',     subColor:'var(--tv-text3)' },
+          { label:t('stats.sharesDeployed'),  value: summary.total_qty||0, sub:t('stats.totalUnits'),  color:'var(--tv-text)',     subColor:'var(--tv-text3)' },
+          { label:t('stats.totalPnl'),        value:`₹${pnl.toFixed(2)}`, sub: pnl>=0?t('stats.inProfit'):t('stats.inLoss'), color:pnl>=0?'#089981':'#F23645', subColor:pnl>=0?'rgba(8,153,129,0.5)':'rgba(242,54,69,0.5)', mono:true },
+          { label:t('stats.systemStatus'),    value: summary.status||t('status.standby'), sub: openBots>0?t('stats.aiActive'):t('stats.awaitingOrders'), color:openBots>0?'#089981':'var(--tv-text2)', subColor:'var(--tv-text3)' },
         ].map(({ label, value, sub, color, subColor, mono }) => (
           <div key={label} style={{
             background:'var(--tv-bg2)', border:'1px solid var(--tv-border)', borderRadius:10,
@@ -51,29 +51,29 @@ export default function StatsView({ portfolio }) {
       {/* ── Active Positions ── */}
       <div style={{ background:'var(--tv-bg2)', border:'1px solid var(--tv-border)', borderRadius:10, marginBottom:16, overflow:'hidden' }}>
         <div style={{ padding:'12px 16px', borderBottom:'1px solid var(--tv-border)', display:'flex', justifyContent:'space-between', alignItems:'center' }}>
-          <span style={{ fontSize:10, color:'var(--tv-text2)', textTransform:'uppercase', letterSpacing:'0.12em', fontWeight:700 }}>Active AI Positions</span>
+          <span style={{ fontSize:10, color:'var(--tv-text2)', textTransform:'uppercase', letterSpacing:'0.12em', fontWeight:700 }}>{t('stats.activeAiPositions')}</span>
           <span style={{
             padding:'2px 10px', borderRadius:14, fontSize:10, fontWeight:600,
             background: openBots>0?'rgba(8,153,129,0.10)':'transparent',
             border:`1px solid ${openBots>0?'rgba(8,153,129,0.25)':'var(--tv-border)'}`,
             color: openBots>0?'#089981':'var(--tv-text3)',
           }}>
-            {openBots} open
+            {t('analytics.positionsOpen', { count: openBots })}
           </span>
         </div>
 
         {active_bots.length === 0 ? (
           <div style={{ padding:'50px 20px', textAlign:'center' }}>
-              <div style={{ fontSize:13, color:'var(--tv-text3)', fontWeight:600, marginBottom:6 }}>No active positions</div>
+              <div style={{ fontSize:13, color:'var(--tv-text3)', fontWeight:600, marginBottom:6 }}>{t('stats.noActivePositions')}</div>
             <div style={{ fontSize:11, color:'var(--tv-text2)' }}>
-              Go to <strong style={{color:'var(--tv-text2)'}}>Chart</strong> or <strong style={{color:'var(--tv-text2)'}}>Orders</strong> and execute an AI order to see it here.
+              {t('stats.goToChartOrders')}
             </div>
           </div>
         ) : (
           <table style={{ width:'100%', borderCollapse:'collapse' }}>
             <thead>
               <tr>
-                {['Symbol','Side','Qty','AI Entry Price','P&L','Return %','Entry Date','Status'].map(h=>(
+                {[t('stats.symbol'),t('stats.side'),t('stats.qty'),t('stats.entryPrice'),t('stats.pnl'),t('stats.returnPct'),t('stats.entryDate'),t('stats.status')].map(h=>(
                   <th key={h} style={thS}>{h}</th>
                 ))}
               </tr>
@@ -94,7 +94,7 @@ export default function StatsView({ portfolio }) {
                         border:`1px solid ${bot.strat.includes('Buy')?'rgba(8,153,129,0.3)':'rgba(242,54,69,0.3)'}`,
                         color: bot.strat.includes('Buy')?'#089981':'#F23645',
                       }}>
-                        {bot.strat.includes('Buy')?'LONG':'SHORT'}
+                        {bot.strat.includes('Buy')?t('portfolio.buyLabel'):t('portfolio.sellLabel')}
                       </span>
                     </td>
                     <td style={tdS()}>{bot.qty}</td>
@@ -109,7 +109,7 @@ export default function StatsView({ portfolio }) {
                     <td style={tdS()}>
                       <span style={{ fontSize:10 }}>
                         <span style={{ color:'#089981' }}>●</span>
-                        <span style={{ color:'var(--tv-text2)', marginLeft:5 }}>Executed</span>
+                        <span style={{ color:'var(--tv-text2)', marginLeft:5 }}>{t('stats.executed')}</span>
                       </span>
                     </td>
                   </tr>
@@ -123,14 +123,14 @@ export default function StatsView({ portfolio }) {
       {/* ── Market Overview ── */}
       <div style={{ background:'var(--tv-bg2)', border:'1px solid var(--tv-border)', borderRadius:10, overflow:'hidden' }}>
         <div style={{ padding:'12px 16px', borderBottom:'1px solid var(--tv-border)', display:'flex', justifyContent:'space-between', alignItems:'center' }}>
-          <span style={{ fontSize:10, color:'var(--tv-text2)', textTransform:'uppercase', letterSpacing:'0.12em', fontWeight:700 }}>Market Overview</span>
-          <span style={{ fontSize:9, color:'var(--tv-text3)' }}>NSE · Backtest data · {watchlist.length} pairs</span>
+          <span style={{ fontSize:10, color:'var(--tv-text2)', textTransform:'uppercase', letterSpacing:'0.12em', fontWeight:700 }}>{t('stats.marketOverview')}</span>
+          <span style={{ fontSize:9, color:'var(--tv-text3)' }}>{t('stats.marketMeta', { count: watchlist.length })}</span>
         </div>
 
         <table style={{ width:'100%', borderCollapse:'collapse' }}>
           <thead>
             <tr>
-              {['Symbol','Last Price','Change ₹','Change %','Vol. Bar','Trend'].map(h=>(
+              {[t('stats.symbol'),t('stats.lastPrice'),t('stats.changeRupee'),t('stats.changePct'),t('stats.volBar'),t('stats.trend')].map(h=>(
                 <th key={h} style={thS}>{h}</th>
               ))}
             </tr>
@@ -166,7 +166,7 @@ export default function StatsView({ portfolio }) {
                       border:`1px solid ${w.trend==='up'?'rgba(8,153,129,0.25)':'rgba(242,54,69,0.25)'}`,
                       color: w.trend==='up'?'#089981':'#F23645',
                     }}>
-                      {w.trend==='up'?'▲ Bullish':'▼ Bearish'}
+                      {w.trend==='up'?`▲ ${t('stats.bullish')}`:`▼ ${t('stats.bearish')}`}
                     </span>
                   </td>
                 </tr>
@@ -185,7 +185,7 @@ export default function StatsView({ portfolio }) {
             onMouseEnter={e=>e.currentTarget.style.background='var(--tv-bg3)'}
             onMouseLeave={e=>e.currentTarget.style.background='var(--tv-bg2)'}
           >
-            {showAllMarketOverview ? 'Show Less' : `Show all ${watchlist.length} pairs`}
+            {showAllMarketOverview ? t('stats.showLess') : t('stats.showAllPairs', { count: watchlist.length })}
           </div>
         )}
       </div>

@@ -8,7 +8,7 @@ const card = {
   padding: 16,
 };
 
-export default function AccountView({ status, username, onLogout, language }) {
+export default function AccountView({ status, username, onLogout, language, t }) {
   const [fullName, setFullName] = useState(() => localStorage.getItem('profile_full_name') || '');
   const [email, setEmail] = useState(() => localStorage.getItem('profile_email') || '');
   const [phone, setPhone] = useState(() => localStorage.getItem('profile_phone') || '');
@@ -57,7 +57,7 @@ export default function AccountView({ status, username, onLogout, language }) {
         return;
       }
 
-      setProfileMsg('Profile updated successfully.');
+      setProfileMsg(t('account.updated'));
       setIsEditingProfile(false);
     } catch (e) {
       setProfileErr('Failed to update profile.');
@@ -88,20 +88,20 @@ export default function AccountView({ status, username, onLogout, language }) {
 
     setNewPassword('');
     setConfirmPassword('');
-    setPasswordMsg('Password updated successfully.');
+    setPasswordMsg(t('account.passwordUpdated'));
   };
 
   return (
     <div style={{ height: '100%', overflowY: 'auto', background: 'var(--tv-bg)', padding: 16 }}>
       <div style={{ fontSize: 12, color: 'var(--tv-text3)', textTransform: 'uppercase', letterSpacing: '0.12em', marginBottom: 12 }}>
-        Account
+        {t('account.title')}
       </div>
 
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))', gap: 12, maxWidth: 900 }}>
         <div style={card}>
-          <div style={{ fontSize: 14, fontWeight: 700, color: 'var(--tv-text)', marginBottom: 10 }}>Profile</div>
+          <div style={{ fontSize: 14, fontWeight: 700, color: 'var(--tv-text)', marginBottom: 10 }}>{t('account.profile')}</div>
           <div style={{ marginBottom: 10 }}>
-            <div style={{ fontSize: 11, color: 'var(--tv-text3)', marginBottom: 6 }}>Username (permanent)</div>
+            <div style={{ fontSize: 11, color: 'var(--tv-text3)', marginBottom: 6 }}>{t('account.username')}</div>
             <input
               value={username || '—'}
               disabled
@@ -110,43 +110,43 @@ export default function AccountView({ status, username, onLogout, language }) {
           </div>
 
           <div style={{ marginBottom: 10 }}>
-            <div style={{ fontSize: 11, color: 'var(--tv-text3)', marginBottom: 6 }}>Full Name</div>
+            <div style={{ fontSize: 11, color: 'var(--tv-text3)', marginBottom: 6 }}>{t('account.fullName')}</div>
             <input
               value={fullName}
               onChange={(e) => setFullName(e.target.value)}
               disabled={!isEditingProfile}
-              placeholder="Enter full name"
+              placeholder={t('account.fullName')}
               style={{ width: '100%', padding: '9px 10px', borderRadius: 8, opacity: isEditingProfile ? 1 : 0.8 }}
             />
           </div>
 
           <div style={{ marginBottom: 10 }}>
-            <div style={{ fontSize: 11, color: 'var(--tv-text3)', marginBottom: 6 }}>Email</div>
+            <div style={{ fontSize: 11, color: 'var(--tv-text3)', marginBottom: 6 }}>{t('account.email')}</div>
             <input
               type="email"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               disabled={!isEditingProfile}
-              placeholder="name@example.com"
+              placeholder={t('account.email')}
               style={{ width: '100%', padding: '9px 10px', borderRadius: 8, opacity: isEditingProfile ? 1 : 0.8 }}
             />
           </div>
 
           <div>
-            <div style={{ fontSize: 11, color: 'var(--tv-text3)', marginBottom: 6 }}>Phone</div>
+            <div style={{ fontSize: 11, color: 'var(--tv-text3)', marginBottom: 6 }}>{t('account.phone')}</div>
             <input
               value={phone}
               onChange={(e) => setPhone(e.target.value)}
               disabled={!isEditingProfile}
-              placeholder="+91 XXXXX XXXXX"
+              placeholder={t('account.phone')}
               style={{ width: '100%', padding: '9px 10px', borderRadius: 8, opacity: isEditingProfile ? 1 : 0.8 }}
             />
           </div>
 
           <div style={{ display: 'flex', gap: 8, marginTop: 12 }}>
             {!isEditingProfile ? (
-              <button
-                onClick={() => { setProfileErr(''); setProfileMsg(''); setIsEditingProfile(true); }}
+                <button
+                  onClick={() => { setProfileErr(''); setProfileMsg(''); setIsEditingProfile(true); }}
                 style={{
                   border: '1px solid var(--tv-border)',
                   background: 'var(--tv-bg3)',
@@ -157,9 +157,8 @@ export default function AccountView({ status, username, onLogout, language }) {
                   fontSize: 12,
                   fontWeight: 600,
                 }}
-              >
-                Edit Details
-              </button>
+                >{t('account.edit')}
+                </button>
             ) : (
               <>
                 <button
@@ -174,8 +173,7 @@ export default function AccountView({ status, username, onLogout, language }) {
                     fontSize: 12,
                     fontWeight: 700,
                   }}
-                >
-                  Save Changes
+                >{t('account.save')}
                 </button>
                 <button
                   onClick={() => { setIsEditingProfile(false); setProfileErr(''); setProfileMsg(''); }}
@@ -189,8 +187,7 @@ export default function AccountView({ status, username, onLogout, language }) {
                     fontSize: 12,
                     fontWeight: 600,
                   }}
-                >
-                  Cancel
+                >{t('account.cancel')}
                 </button>
               </>
             )}
@@ -201,34 +198,34 @@ export default function AccountView({ status, username, onLogout, language }) {
         </div>
 
         <div style={card}>
-          <div style={{ fontSize: 14, fontWeight: 700, color: 'var(--tv-text)', marginBottom: 10 }}>Workspace</div>
+          <div style={{ fontSize: 14, fontWeight: 700, color: 'var(--tv-text)', marginBottom: 10 }}>{t('account.workspace')}</div>
           <div style={{ fontSize: 12, color: 'var(--tv-text2)', marginBottom: 5 }}>
-            API: <span style={{ color: status ? '#089981' : '#6b7280' }}>{status ? 'Online' : 'Offline'}</span>
+            {t('account.api')}: <span style={{ color: status ? '#089981' : '#6b7280' }}>{status ? t('status.online') : t('status.offline')}</span>
           </div>
-          <div style={{ fontSize: 12, color: 'var(--tv-text2)', marginBottom: 5 }}>Mode: {status?.mode || 'Backtest'}</div>
-          <div style={{ fontSize: 12, color: 'var(--tv-text2)' }}>Language: {language?.toUpperCase?.() || 'EN'}</div>
+          <div style={{ fontSize: 12, color: 'var(--tv-text2)', marginBottom: 5 }}>{t('account.mode')}: {status?.mode || t('status.backtest')}</div>
+          <div style={{ fontSize: 12, color: 'var(--tv-text2)' }}>{t('account.language')}: {language?.toUpperCase?.() || 'EN'}</div>
         </div>
 
         <div style={card}>
-          <div style={{ fontSize: 14, fontWeight: 700, color: 'var(--tv-text)', marginBottom: 10 }}>Security</div>
-          <div style={{ fontSize: 12, color: 'var(--tv-text2)', marginBottom: 8 }}>Password: ••••••••</div>
+          <div style={{ fontSize: 14, fontWeight: 700, color: 'var(--tv-text)', marginBottom: 10 }}>{t('account.security')}</div>
+          <div style={{ fontSize: 12, color: 'var(--tv-text2)', marginBottom: 8 }}>{t('account.password')}</div>
           <div style={{ marginBottom: 8 }}>
-            <div style={{ fontSize: 11, color: 'var(--tv-text3)', marginBottom: 6 }}>New Password</div>
+            <div style={{ fontSize: 11, color: 'var(--tv-text3)', marginBottom: 6 }}>{t('account.newPassword')}</div>
             <input
               type="password"
               value={newPassword}
               onChange={(e) => setNewPassword(e.target.value)}
-              placeholder="Enter new password"
+              placeholder={t('account.newPassword')}
               style={{ width: '100%', padding: '9px 10px', borderRadius: 8 }}
             />
           </div>
           <div style={{ marginBottom: 10 }}>
-            <div style={{ fontSize: 11, color: 'var(--tv-text3)', marginBottom: 6 }}>Confirm Password</div>
+            <div style={{ fontSize: 11, color: 'var(--tv-text3)', marginBottom: 6 }}>{t('account.confirmPassword')}</div>
             <input
               type="password"
               value={confirmPassword}
               onChange={(e) => setConfirmPassword(e.target.value)}
-              placeholder="Re-enter new password"
+              placeholder={t('account.confirmPassword')}
               style={{ width: '100%', padding: '9px 10px', borderRadius: 8 }}
             />
           </div>
@@ -245,17 +242,16 @@ export default function AccountView({ status, username, onLogout, language }) {
               fontSize: 12,
               fontWeight: 600,
             }}
-          >
-            {savingPassword ? 'Updating…' : 'Change Password'}
+          >{savingPassword ? (t('account.updating') || 'Updating…') : t('account.changePassword')}
           </button>
           {passwordMsg && <div style={{ marginTop: 10, fontSize: 11, color: '#089981' }}>{passwordMsg}</div>}
           {passwordErr && <div style={{ marginTop: 10, fontSize: 11, color: '#F23645' }}>{passwordErr}</div>}
         </div>
 
         <div style={card}>
-          <div style={{ fontSize: 14, fontWeight: 700, color: 'var(--tv-text)', marginBottom: 10 }}>Session</div>
+          <div style={{ fontSize: 14, fontWeight: 700, color: 'var(--tv-text)', marginBottom: 10 }}>{t('account.session') || 'Session'}</div>
           <div style={{ fontSize: 12, color: 'var(--tv-text2)', marginBottom: 10 }}>
-            Manage your active login and account session.
+            {t('account.sessionNote') || 'Manage your active login and account session.'}
           </div>
           <button
             onClick={onLogout}
@@ -269,8 +265,7 @@ export default function AccountView({ status, username, onLogout, language }) {
               fontSize: 12,
               fontWeight: 700,
             }}
-          >
-            Logout
+          >{t('account.logout')}
           </button>
         </div>
       </div>

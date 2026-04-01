@@ -6,8 +6,9 @@ import PortfolioView from './components/PortfolioView';
 import LandingPage from './components/LandingPage';
 import SettingsView from './components/SettingsView';
 import AccountView from './components/AccountView';
+import { getTranslator, getLocaleForLanguage } from './i18n';
 
-const ActiveBotsSummary = ({ portfolio, onBotTerminated, onViewPortfolio }) => {
+const ActiveBotsSummary = ({ portfolio, onBotTerminated, onViewPortfolio, t }) => {
   const { active_bots = [], summary = {} } = portfolio;
   const [selectedBot, setSelectedBot] = useState(null);
   const [deleting, setDeleting] = useState(false);
@@ -59,9 +60,9 @@ const ActiveBotsSummary = ({ portfolio, onBotTerminated, onViewPortfolio }) => {
   return (
     <>
       <div style={s.container}>
-        <div style={s.title}>Active Orders</div>
+        <div style={s.title}>{t('portfolio.activeOrders') || 'Active Orders'}</div>
         {active_bots.length === 0 ? (
-          <div style={s.emptyState}>No active bots</div>
+          <div style={s.emptyState}>{t('portfolio.noActiveBots') || 'No active bots'}</div>
         ) : (
           active_bots.slice(0, 3).map((bot) => {
             const pnl = bot.pnl || 0;
@@ -72,21 +73,21 @@ const ActiveBotsSummary = ({ portfolio, onBotTerminated, onViewPortfolio }) => {
               <div key={bot.id} style={s.botRow} onDoubleClick={() => setSelectedBot(bot)}>
                 <div style={s.botHeader}>
                   <span style={s.ticker}>{bot.ticker}</span>
-                  <span style={s.badge(isBuy)}>{isBuy ? 'LONG' : 'SHORT'}</span>
+                  <span style={s.badge(isBuy)}>{isBuy ? (t('portfolio.buyLabel') || 'LONG') : (t('portfolio.sellLabel') || 'SHORT')}</span>
                 </div>
                 <div style={s.metricsRow}>
                   <div style={s.metricBox}>
-                    <span style={s.metricLabel}>Entry</span>
+                    <span style={s.metricLabel}>{t('portfolio.entry') || 'Entry'}</span>
                     <span style={s.metricValue()}>₹{bot.ai_exec_price?.toFixed(1)}</span>
                   </div>
                   <div style={s.metricBox}>
-                    <span style={s.metricLabel}>P&L</span>
+                    <span style={s.metricLabel}>{t('portfolio.pnl') || 'P&L'}</span>
                     <span style={s.metricValue(pnl >= 0 ? '#089981' : '#F23645')}>
                       {pnl >= 0 ? '+' : ''}₹{pnl.toFixed(0)}
                     </span>
                   </div>
                   <div style={s.metricBox}>
-                    <span style={s.metricLabel}>Return</span>
+                    <span style={s.metricLabel}>{t('portfolio.return') || 'Return'}</span>
                     <span style={s.metricValue(pnlPct >= 0 ? '#089981' : '#F23645')}>
                       {pnlPct >= 0 ? '+' : ''}{pnlPct.toFixed(1)}%
                     </span>
@@ -104,13 +105,13 @@ const ActiveBotsSummary = ({ portfolio, onBotTerminated, onViewPortfolio }) => {
           position:'fixed', inset:0, zIndex:9998, background:'rgba(0,0,0,0.6)', backdropFilter:'blur(2px)',
           display:'flex', alignItems:'center', justifyContent:'center', padding:16,
         }} onClick={(e) => { if(e.target === e.currentTarget) setSelectedBot(null); }}>
-          <div style={{
+            <div style={{
             width:'100%', maxWidth:380, background:'var(--tv-bg2)', border:'1px solid var(--tv-border)',
             borderRadius:12, padding:20,
           }}>
             <div style={{ display:'flex', justifyContent:'space-between', alignItems:'center', marginBottom:16 }}>
               <div style={{ fontSize:16, fontWeight:700, color:'var(--tv-text)' }}>
-                {selectedBot.ticker} Order Details
+                {selectedBot.ticker} {t('portfolio.orderDetails') || 'Order Details'}
               </div>
               <button onClick={() => setSelectedBot(null)} style={{ background:'none', border:'none', color:'var(--tv-text2)', cursor:'pointer', fontSize:18 }}>
                 ✕
@@ -120,33 +121,33 @@ const ActiveBotsSummary = ({ portfolio, onBotTerminated, onViewPortfolio }) => {
             <div style={{ marginBottom:20, display:'flex', flexDirection:'column', gap:12 }}>
               <div style={{ display:'grid', gridTemplateColumns:'1fr 1fr', gap:12 }}>
                 <div>
-                  <div style={{ fontSize:10, color:'var(--tv-text3)', textTransform:'uppercase', letterSpacing:'0.1em', marginBottom:4 }}>Type</div>
-                  <div style={{ fontSize:13, fontWeight:700, color:'var(--tv-text)' }}>{selectedBot.strat?.includes("Buy") ? 'LONG' : 'SHORT'}</div>
+                  <div style={{ fontSize:10, color:'var(--tv-text3)', textTransform:'uppercase', letterSpacing:'0.1em', marginBottom:4 }}>{t('portfolio.type') || 'Type'}</div>
+                  <div style={{ fontSize:13, fontWeight:700, color:'var(--tv-text)' }}>{selectedBot.strat?.includes("Buy") ? (t('portfolio.buyLabel') || 'LONG') : (t('portfolio.sellLabel') || 'SHORT')}</div>
                 </div>
                 <div>
-                  <div style={{ fontSize:10, color:'var(--tv-text3)', textTransform:'uppercase', letterSpacing:'0.1em', marginBottom:4 }}>Quantity</div>
+                  <div style={{ fontSize:10, color:'var(--tv-text3)', textTransform:'uppercase', letterSpacing:'0.1em', marginBottom:4 }}>{t('portfolio.quantity') || 'Quantity'}</div>
                   <div style={{ fontSize:13, fontWeight:700, color:'var(--tv-text)' }}>× {selectedBot.qty}</div>
                 </div>
               </div>
               <div style={{ display:'grid', gridTemplateColumns:'1fr 1fr', gap:12 }}>
                 <div>
-                  <div style={{ fontSize:10, color:'var(--tv-text3)', textTransform:'uppercase', letterSpacing:'0.1em', marginBottom:4 }}>Entry Price</div>
+                  <div style={{ fontSize:10, color:'var(--tv-text3)', textTransform:'uppercase', letterSpacing:'0.1em', marginBottom:4 }}>{t('portfolio.entryPrice') || 'Entry Price'}</div>
                   <div style={{ fontSize:13, fontWeight:700, color:'var(--tv-text)', fontFamily:'monospace' }}>₹{selectedBot.ai_exec_price?.toFixed(2)}</div>
                 </div>
                 <div>
-                  <div style={{ fontSize:10, color:'var(--tv-text3)', textTransform:'uppercase', letterSpacing:'0.1em', marginBottom:4 }}>Status</div>
-                  <div style={{ fontSize:13, fontWeight:700, color:'#089981' }}>● Executed</div>
+                  <div style={{ fontSize:10, color:'var(--tv-text3)', textTransform:'uppercase', letterSpacing:'0.1em', marginBottom:4 }}>{t('portfolio.status') || 'Status'}</div>
+                  <div style={{ fontSize:13, fontWeight:700, color:'#089981' }}>● {t('portfolio.executed') || 'Executed'}</div>
                 </div>
               </div>
               <div style={{ display:'grid', gridTemplateColumns:'1fr 1fr', gap:12 }}>
                 <div>
-                  <div style={{ fontSize:10, color:'var(--tv-text3)', textTransform:'uppercase', letterSpacing:'0.1em', marginBottom:4 }}>P&L</div>
+                  <div style={{ fontSize:10, color:'var(--tv-text3)', textTransform:'uppercase', letterSpacing:'0.1em', marginBottom:4 }}>{t('portfolio.pnl') || 'P&L'}</div>
                   <div style={{ fontSize:13, fontWeight:700, color: (selectedBot.pnl || 0) >= 0 ? '#089981' : '#F23645', fontFamily:'monospace' }}>
                     {(selectedBot.pnl || 0) >= 0 ? '+' : ''}₹{(selectedBot.pnl || 0).toFixed(2)}
                   </div>
                 </div>
                 <div>
-                  <div style={{ fontSize:10, color:'var(--tv-text3)', textTransform:'uppercase', letterSpacing:'0.1em', marginBottom:4 }}>Return</div>
+                  <div style={{ fontSize:10, color:'var(--tv-text3)', textTransform:'uppercase', letterSpacing:'0.1em', marginBottom:4 }}>{t('portfolio.return') || 'Return'}</div>
                   <div style={{ fontSize:13, fontWeight:700, color: (selectedBot.pnl_pct || 0) >= 0 ? '#089981' : '#F23645', fontFamily:'monospace' }}>
                     {(selectedBot.pnl_pct || 0) >= 0 ? '+' : ''}{(selectedBot.pnl_pct || 0).toFixed(2)}%
                   </div>
@@ -160,14 +161,14 @@ const ActiveBotsSummary = ({ portfolio, onBotTerminated, onViewPortfolio }) => {
                 borderRadius:8, color:'var(--tv-text)', fontWeight:600, cursor:'pointer', fontSize:12,
                 transition:'background 0.2s'
               }} onMouseOver={(e) => e.target.style.background = 'var(--tv-bg)'} onMouseOut={(e) => e.target.style.background = 'var(--tv-bg3)'}>
-                View on Portfolio
+                {t('portfolio.viewOnPortfolio') || 'View on Portfolio'}
               </button>
               <button onClick={handleDeleteBot} disabled={deleting} style={{
                 flex:1, padding:'10px 14px', background:'rgba(242,54,69,0.15)', border:'1px solid rgba(242,54,69,0.35)',
                 borderRadius:8, color:'#F23645', fontWeight:600, cursor:deleting ? 'not-allowed' : 'pointer', fontSize:12,
                 opacity:deleting ? 0.6 : 1, transition:'opacity 0.2s'
               }}>
-                {deleting ? 'Closing...' : 'Close Order'}
+                {deleting ? (t('portfolio.closing') || 'Closing...') : (t('portfolio.closeOrder') || 'Close Order')}
               </button>
             </div>
           </div>
@@ -183,14 +184,14 @@ const getSystemTheme = () => {
 };
 
 const NAV = [
-  { id: 'stats',     label: 'Overview' },
-  { id: 'analytics', label: 'Chart' },
-  { id: 'portfolio', label: 'Portfolio' },
+  { id: 'stats',     labelKey: 'nav.overview' },
+  { id: 'analytics', labelKey: 'nav.chart' },
+  { id: 'portfolio', labelKey: 'nav.portfolio' },
 ];
 
 const BOTTOM_NAV = [
-  { id: 'settings', label: 'Settings' },
-  { id: 'account',  label: 'Account' },
+  { id: 'settings', labelKey: 'nav.settings' },
+  { id: 'account',  labelKey: 'nav.account' },
 ];
 
 const SettingsIcon = ({ color }) => (
@@ -257,6 +258,12 @@ export default function App() {
   const [portfolio, setPortfolio] = useState({ summary:{}, active_bots:[] });
   const [watchlist, setWatchlist] = useState([]);
   const [activeStock, setActiveStock] = useState('');
+  const t = getTranslator(language);
+  const locale = getLocaleForLanguage(language);
+
+  useEffect(() => {
+    document.documentElement.lang = language;
+  }, [language]);
 
   const toggleTheme = () => {
     setThemeMode(prev => {
@@ -337,7 +344,7 @@ export default function App() {
   };
 
   if (appMode === 'landing') {
-    return <LandingPage onLogin={handleLogin} theme={theme} toggleTheme={toggleTheme} />;
+    return <LandingPage onLogin={handleLogin} theme={theme} toggleTheme={toggleTheme} language={language} onLanguageChange={setLanguage} t={t} />;
   }
 
   const needsUsernameSetup = !username;
@@ -390,13 +397,13 @@ export default function App() {
       {/* ── SIDEBAR ── */}
       <aside style={s.aside}>
         <div style={s.logo}>
-          <div style={s.logoT} className="no-caps">IntelliTrail</div>
-          <div style={s.logoS} className="no-caps">AI Engine</div>
+          <div style={s.logoT} className="no-caps">{t('app.name')}</div>
+          <div style={s.logoS} className="no-caps">{t('app.aiEngine')}</div>
         </div>
 
         <nav style={s.nav}>
           {NAV.map(n => (
-            <button key={n.id} onClick={() => setTab(n.id)} style={s.navBtn(tab===n.id)} className="no-caps">{n.label}</button>
+            <button key={n.id} onClick={() => setTab(n.id)} style={s.navBtn(tab===n.id)} className="no-caps">{t(n.labelKey)}</button>
           ))}
         </nav>
 
@@ -410,6 +417,7 @@ export default function App() {
             setTab('portfolio');
             setExpandBotId(botId);
           }}
+          t={t}
         />
 
         {/* Push utility nav to bottom */}
@@ -421,19 +429,19 @@ export default function App() {
           {BOTTOM_NAV.map(n => (
             <button key={n.id} onClick={() => setTab(n.id)} style={s.navBtn(tab===n.id)} className="no-caps">
               {n.id === 'settings' ? <SettingsIcon color={tab===n.id ? 'var(--tv-text)' : 'var(--tv-text2)'} /> : <AccountIcon color={tab===n.id ? 'var(--tv-text)' : 'var(--tv-text2)'} />}
-              <span>{n.label}</span>
+              <span>{t(n.labelKey)}</span>
             </button>
           ))}
         </div>
 
         <div style={s.footer}>
           <div style={s.ftRow}>
-            <span style={s.ftLabel}>API</span>
-            <span style={{ color: status ? '#089981':'#6b7280' }}>{status ? '● Online':'○ Offline'}</span>
+            <span style={s.ftLabel}>{t('status.api')}</span>
+            <span style={{ color: status ? '#089981':'#6b7280' }}>{status ? `● ${t('status.online')}`:`○ ${t('status.offline')}`}</span>
           </div>
           <div style={s.ftRow}>
-            <span style={s.ftLabel}>Mode</span>
-            <span style={{ color:'#6b7280' }}>{status?.mode || 'Backtest'}</span>
+            <span style={s.ftLabel}>{t('status.mode')}</span>
+            <span style={{ color:'#6b7280' }}>{status?.mode || t('status.backtest')}</span>
           </div>
         </div>
       </aside>
@@ -441,9 +449,9 @@ export default function App() {
       {/* ── MAIN ── */}
       <div style={{ flex:1, display:'flex', flexDirection:'column', overflow:'hidden', minWidth:0 }}>
         <main style={{ flex:1, overflow:'hidden', display:'flex', flexDirection:'column' }}>
-          {tab==='stats'     && <StatsView portfolio={portfolio} theme={theme} />}
-          {tab==='analytics' && <AnalyticsView availableStocks={stocks} activeStock={activeStock} setActiveStock={setActiveStock} watchlist={watchlist} onTogglePin={handleTogglePin} theme={theme} onToggleTheme={toggleTheme} />}
-           {tab==='portfolio' && <PortfolioView availableStocks={stocks} portfolio={portfolio} fetchPortfolio={fetchAll} watchlist={watchlist} onTogglePin={handleTogglePin} theme={theme} expandBotId={expandBotId} />}
+          {tab==='stats'     && <StatsView portfolio={portfolio} theme={theme} language={language} t={t} />}
+          {tab==='analytics' && <AnalyticsView availableStocks={stocks} activeStock={activeStock} setActiveStock={setActiveStock} watchlist={watchlist} onTogglePin={handleTogglePin} theme={theme} onToggleTheme={toggleTheme} language={language} onLanguageChange={setLanguage} t={t} locale={locale} />}
+           {tab==='portfolio' && <PortfolioView availableStocks={stocks} portfolio={portfolio} fetchPortfolio={fetchAll} watchlist={watchlist} onTogglePin={handleTogglePin} theme={theme} expandBotId={expandBotId} language={language} t={t} locale={locale} />}
           {tab==='settings'  && (
             <SettingsView
               theme={theme}
@@ -451,9 +459,10 @@ export default function App() {
               onThemeModeChange={setThemeMode}
               language={language}
               onLanguageChange={setLanguage}
+              t={t}
             />
           )}
-          {tab==='account'   && <AccountView status={status} username={username} onLogout={handleLogout} language={language} />}
+          {tab==='account'   && <AccountView status={status} username={username} onLogout={handleLogout} language={language} t={t} />}
         </main>
       </div>
     </div>

@@ -1,4 +1,5 @@
-import React, { useEffect, useState } from 'react';
+import React from 'react';
+import { LANGUAGE_OPTIONS } from '../i18n';
 
 const card = {
   background: 'var(--tv-bg2)',
@@ -18,31 +19,31 @@ const themeChip = (active) => ({
   fontWeight: 600,
 });
 
-export default function SettingsView({ theme, themeMode, onThemeModeChange, language, onLanguageChange }) {
+export default function SettingsView({ theme, themeMode, onThemeModeChange, language, onLanguageChange, t }) {
   return (
     <div style={{ height: '100%', overflowY: 'auto', background: 'var(--tv-bg)', padding: 16 }}>
       <div style={{ fontSize: 12, color: 'var(--tv-text3)', textTransform: 'uppercase', letterSpacing: '0.12em', marginBottom: 6 }}>
-        Settings
+        {t('settings.title')}
       </div>
       <div style={{ fontSize: 13, color: 'var(--tv-text2)', marginBottom: 14 }}>
-        Personalize your workspace preferences.
+        {t('settings.subtitle')}
       </div>
 
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(320px, 1fr))', gap: 12, maxWidth: 980 }}>
         <div style={card}>
           <div style={{ fontSize: 14, fontWeight: 700, color: 'var(--tv-text)', marginBottom: 12 }}>
-            Appearance
+            {t('settings.appearance')}
           </div>
 
           <div style={{ marginBottom: 12 }}>
-            <div style={{ fontSize: 12, color: 'var(--tv-text)', marginBottom: 8 }}>Theme Mode</div>
+            <div style={{ fontSize: 12, color: 'var(--tv-text)', marginBottom: 8 }}>{t('settings.themeMode')}</div>
             <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap' }}>
-              <button onClick={() => onThemeModeChange('auto')} style={themeChip(themeMode === 'auto')}>Auto</button>
-              <button onClick={() => onThemeModeChange('light')} style={themeChip(themeMode === 'light')}>Light</button>
-              <button onClick={() => onThemeModeChange('dark')} style={themeChip(themeMode === 'dark')}>Dark</button>
+              <button onClick={() => onThemeModeChange('auto')} style={themeChip(themeMode === 'auto')}>{t('settings.auto')}</button>
+              <button onClick={() => onThemeModeChange('light')} style={themeChip(themeMode === 'light')}>{t('settings.light')}</button>
+              <button onClick={() => onThemeModeChange('dark')} style={themeChip(themeMode === 'dark')}>{t('settings.dark')}</button>
             </div>
             <div style={{ fontSize: 11, color: 'var(--tv-text2)', marginTop: 8 }}>
-              Active theme: <span style={{ color: 'var(--tv-text)' }}>{theme === 'dark' ? 'Dark' : 'Light'}</span>
+              {t('settings.activeTheme')}: <span style={{ color: 'var(--tv-text)' }}>{theme === 'dark' ? t('settings.dark') : t('settings.light')}</span>
             </div>
           </div>
 
@@ -50,24 +51,22 @@ export default function SettingsView({ theme, themeMode, onThemeModeChange, lang
 
         <div style={card}>
           <div style={{ fontSize: 14, fontWeight: 700, color: 'var(--tv-text)', marginBottom: 12 }}>
-            Language & Region
+            {t('settings.languageRegion')}
           </div>
 
           <div style={{ marginBottom: 10 }}>
-            <div style={{ fontSize: 12, color: 'var(--tv-text)', marginBottom: 7 }}>App Language</div>
+            <div style={{ fontSize: 12, color: 'var(--tv-text)', marginBottom: 7 }}>{t('settings.appLanguage')}</div>
             <select
               value={language}
               onChange={(e) => onLanguageChange(e.target.value)}
               style={{ width: '100%', maxWidth: 280, padding: '10px 12px', borderRadius: 8 }}
             >
-              <option value="en">English</option>
-              <option value="hi">Hindi</option>
-              <option value="mr">Marathi</option>
-              <option value="ta">Tamil</option>
-              <option value="te">Telugu</option>
+              {LANGUAGE_OPTIONS.map((opt) => (
+                <option key={opt.value} value={opt.value}>{opt.label}</option>
+              ))}
             </select>
             <div style={{ fontSize: 11, color: 'var(--tv-text2)', marginTop: 8 }}>
-              Interface translations can be expanded in future releases.
+              {t('settings.note')}
             </div>
           </div>
         </div>
