@@ -1,13 +1,27 @@
+<div align="center">
+
+<br/>
+
 # 📈 IntelliTrail
 
-> An **AI-powered trading bot platform** that deploys intelligent Buy & Sell bots with dynamic trailing stop-loss logic — built with Python, FastAPI, React, Vite, Tailwind CSS, and Supabase.
+### AI-Powered Trading Bot Platform with Dynamic Trailing Stop-Loss
 
-![Python](https://img.shields.io/badge/Python-3.10+-3776AB?style=flat&logo=python&logoColor=white)
-![FastAPI](https://img.shields.io/badge/FastAPI-0.100+-009688?style=flat&logo=fastapi&logoColor=white)
-![React](https://img.shields.io/badge/React-19-61DAFB?style=flat&logo=react&logoColor=white)
-![Tailwind CSS](https://img.shields.io/badge/Tailwind-3.x-06B6D4?style=flat&logo=tailwindcss&logoColor=white)
-![Supabase](https://img.shields.io/badge/Supabase-Auth%2FDB-3ECF8E?style=flat&logo=supabase&logoColor=white)
-![scikit-learn](https://img.shields.io/badge/scikit--learn-ML-F7931E?style=flat&logo=scikit-learn&logoColor=white)
+<p>
+  <img src="https://img.shields.io/badge/Python-3.10+-3776AB?style=for-the-badge&logo=python&logoColor=white"/>
+  <img src="https://img.shields.io/badge/FastAPI-0.100+-009688?style=for-the-badge&logo=fastapi&logoColor=white"/>
+  <img src="https://img.shields.io/badge/React-19-61DAFB?style=for-the-badge&logo=react&logoColor=white"/>
+  <img src="https://img.shields.io/badge/Tailwind-3.x-06B6D4?style=for-the-badge&logo=tailwindcss&logoColor=white"/>
+  <img src="https://img.shields.io/badge/Supabase-Auth%2FDB-3ECF8E?style=for-the-badge&logo=supabase&logoColor=white"/>
+  <img src="https://img.shields.io/badge/scikit--learn-ML-F7931E?style=for-the-badge&logo=scikit-learn&logoColor=white"/>
+</p>
+
+<p><strong>IntelliTrail</strong> deploys intelligent Buy & Sell bots that use a machine learning prediction engine to dynamically adjust trailing stop-loss levels in real time — helping you protect profits and optimize entries with minimal manual effort.</p>
+
+<a href="#-getting-started">Get Started</a> · <a href="#-api-reference">API Docs</a> · <a href="#-bot-strategies">Strategies</a> · <a href="#-roadmap">Roadmap</a>
+
+<br/>
+
+</div>
 
 ---
 
@@ -25,50 +39,55 @@
 - [Portfolio Manager](#-portfolio-manager)
 - [Frontend](#-frontend)
 - [Roadmap](#-roadmap)
+- [Contributing](#-contributing)
 - [License](#-license)
 
 ---
 
 ## ✨ Features
 
-### Core
+### Core Trading Engine
 
-- 🤖 **AI Bot Deployment** — Deploy Buy and Sell bots with a single click using ML-driven predictions
-- 📊 **Dynamic Trailing Stop-Loss** — AI adjusts the stop-loss multiplier in real time based on predicted price direction
-- 🧠 **ML Prediction Engine** — Linear Regression model trained on SMA, RSI, and ATR features to predict close prices
-- 📈 **Technical Indicators** — Auto-computed ATR, SMA-20, SMA-50, RSI via `pandas-ta`
-- 💼 **Portfolio Management** — Run multiple bots simultaneously across different tickers
-- 🔄 **Backtest Mode** — Simulate bot performance on historical minute/daily data
-- 📉 **Strategy Comparison** — Compare Static 2% trailing stop vs IntelliTrail AI side-by-side
-- 🗃️ **Order Management** — Track and store all bot executions with entry price, exit price, and P&L
+| Feature                           | Description                                                                           |
+| --------------------------------- | ------------------------------------------------------------------------------------- |
+| 🤖 **AI Bot Deployment**          | Deploy Buy and Sell bots with a single click using ML-driven price predictions        |
+| 📊 **Dynamic Trailing Stop-Loss** | AI adjusts the stop-loss multiplier in real time based on predicted price direction   |
+| 🧠 **ML Prediction Engine**       | Linear Regression model trained on SMA, RSI, and ATR features to predict close prices |
+| 📈 **Technical Indicators**       | Auto-computed ATR, SMA-20, SMA-50, and RSI via `pandas-ta`                            |
+| 💼 **Portfolio Management**       | Run multiple bots simultaneously across different tickers                             |
+| 🔄 **Backtest Mode**              | Simulate bot performance on historical minute or daily OHLCV data                     |
+| 📉 **Strategy Comparison**        | Compare Static 2% trailing stop vs IntelliTrail AI side-by-side                       |
+| 🗃️ **Order Management**           | Track all bot executions with entry price, exit price, and P&L                        |
 
 ### Frontend Dashboard
 
-- 📊 **Stats Tab** — Fleet overview: active bots, total shares, total P&L, system status
-- 📈 **Analytics Tab** — Candlestick charts, Bollinger Bands, SMA overlays, RSI, AI prediction panel
-- 💼 **Portfolio Tab** — Deploy bots, monitor positions, view P&L charts, terminate bots
-- 🔐 **Supabase Auth** — Secure user authentication with environment-based credentials
+| Tab              | Description                                                                         |
+| ---------------- | ----------------------------------------------------------------------------------- |
+| 📊 **Stats**     | Fleet overview — active bots, total shares, total P&L, system status                |
+| 📈 **Analytics** | Candlestick charts with Bollinger Bands, SMA overlays, RSI panel, and AI prediction |
+| 💼 **Portfolio** | Deploy bots, monitor live positions, view P&L charts, terminate bots                |
+| 🔐 **Auth**      | Secure user authentication powered by Supabase                                      |
 
 ---
 
 ## 🧰 Tech Stack
 
-| Layer              | Technology                         |
-| ------------------ | ---------------------------------- |
-| Backend Runtime    | Python 3.10+                       |
-| API Framework      | FastAPI                            |
-| ML / AI            | scikit-learn (Linear Regression)   |
-| Indicators         | pandas-ta                          |
-| Data Handling      | pandas, numpy                      |
-| Data Source        | yfinance                           |
-| Model Persistence  | joblib                             |
-| Frontend Framework | React 19 + Vite                    |
-| Styling            | Tailwind CSS 3                     |
-| Charts             | Recharts + lightweight-charts      |
-| Icons              | Lucide React                       |
-| Auth / DB          | Supabase                           |
-| HTTP Client        | Axios                              |
-| Dev Server         | uvicorn (backend), Vite (frontend) |
+| Layer                | Technology                          |
+| -------------------- | ----------------------------------- |
+| Backend Runtime      | Python 3.10+                        |
+| API Framework        | FastAPI                             |
+| ML / AI              | scikit-learn (Linear Regression)    |
+| Technical Indicators | pandas-ta                           |
+| Data Handling        | pandas, numpy                       |
+| Market Data Source   | yfinance                            |
+| Model Persistence    | joblib                              |
+| Frontend Framework   | React 19 + Vite                     |
+| Styling              | Tailwind CSS 3                      |
+| Charts               | Recharts + lightweight-charts       |
+| Icons                | Lucide React                        |
+| Auth & Database      | Supabase                            |
+| HTTP Client          | Axios                               |
+| Dev Servers          | uvicorn (backend) · Vite (frontend) |
 
 ---
 
@@ -138,89 +157,92 @@ intellitrail/
 
 ### Prerequisites
 
+Before you begin, make sure you have the following installed:
+
 - [Python](https://python.org) 3.10+
 - [Node.js](https://nodejs.org/) 18+
-- [Supabase](https://supabase.com) project (free tier works)
+- A [Supabase](https://supabase.com) project (free tier works)
 
-### 1. Clone the repository
+---
+
+### Step 1 — Clone the repository
 
 ```bash
 git clone https://github.com/Om-Ingale/Intellitrail.git
 cd Intellitrail
 ```
 
-### 2. Set up Python environment
+### Step 2 — Set up the Python environment
 
 ```bash
 python -m venv .venv
-source .venv/bin/activate        # On Windows: .venv\Scripts\activate
+source .venv/bin/activate        # Windows: .venv\Scripts\activate
 pip install -r requirements.txt
 ```
 
-### 3. Download stock data
+### Step 3 — Download stock data
 
 ```bash
 python scripts/download_data.py
 ```
 
-This downloads 2 years of daily data and 5 days of minute-level data for NIFTY 50, RELIANCE, TCS, and HDFCBANK into `data/raw/`.
+This downloads **2 years of daily OHLCV data** and **5 days of 1-minute data** for NIFTY 50, RELIANCE, TCS, and HDFCBANK into `data/raw/`.
 
-### 4. Train the AI model
+### Step 4 — Train the AI model
 
 ```bash
 python scripts/main.py
 ```
 
-This trains a Linear Regression model and saves it to `models/trained_models/nifty_model.pkl`.
+Trains a Linear Regression model on the downloaded data and saves it to `models/trained_models/nifty_model.pkl`.
 
-### 5. Start the backend
+### Step 5 — Start the backend
 
 ```bash
 source .venv/bin/activate
 uvicorn api.main:app --reload
 ```
 
-Backend runs at `http://localhost:8000`.
+Backend runs at **`http://localhost:8000`**
 
-### 6. Set up the frontend
+### Step 6 — Set up and start the frontend
 
 ```bash
 cd frontend
 cp .env.local.example .env.local
-# Fill in your Supabase credentials (see below)
+# Fill in your Supabase credentials (see Environment Variables below)
 npm install
 npm run dev
 ```
 
-Frontend runs at `http://localhost:5173`.
+Frontend runs at **`http://localhost:5173`**
 
 ---
 
 ## 🔐 Environment Variables
 
-### Backend (`.env` in root)
+### Backend — `.env` (project root)
 
 ```env
 # Add any backend secrets here
 ```
 
-### Frontend (`frontend/.env.local`)
+### Frontend — `frontend/.env.local`
 
 ```env
 VITE_SUPABASE_URL=your_supabase_project_url
 VITE_SUPABASE_ANON_KEY=your_supabase_anon_key
 ```
 
-> ⚠️ Never commit `.env` or `.env.local`. Both are in `.gitignore`. Share keys via a password manager, not in chat or git.
-> Never use the Supabase service role key in frontend code.
+> ⚠️ **Security Notice:** Never commit `.env` or `.env.local` to version control. Both files are listed in `.gitignore`. Share credentials via a password manager, not over chat or git. Never use the Supabase **service role key** in frontend code.
 
 ---
 
 ## 🧠 AI Engine
 
-The AI engine uses a **Linear Regression** model trained on four technical features to predict the next close price.
+IntelliTrail's prediction engine uses a **Linear Regression** model trained on four technical indicators to forecast the next closing price.
 
-**Training Features:**
+### Training Features
 
 | Feature  | Description                       |
 | -------- | --------------------------------- |
@@ -229,56 +251,58 @@ The AI engine uses a **Linear Regression** model trained on four technical featu
 | `rsi`    | 14-period Relative Strength Index |
 | `atr`    | 14-period Average True Range      |
 
-**Target:** `close` (next closing price)
-
-**Training split:** 80% train / 20% test (no shuffle — time-series safe)
-
-The trained model is saved via `joblib` and loaded at runtime by the simulation engine.
+- **Target variable:** `close` (next closing price)
+- **Train/test split:** 80% / 20% — no shuffle applied (time-series safe)
+- **Model persistence:** saved and loaded via `joblib`
 
 ---
 
 ## 🤖 Bot Strategies
 
-### 1. AI Sell Bot — Protect Profits (Dynamic TSLO)
+### Strategy 1 — AI Sell Bot (Dynamic Trailing Stop-Loss)
 
-Uses the AI model to dynamically tighten or loosen the trailing stop-loss:
+Uses the ML model's price prediction to dynamically tighten or loosen the trailing stop:
 
 ```
-Bearish prediction (predicted < current)  →  Tight stop  (1.2× ATR)
-Bullish prediction (predicted > current)  →  Loose stop  (2.0× ATR)
+Bearish signal  (predicted < current price)  →  Tight stop  (1.2× ATR)
+Bullish signal  (predicted > current price)  →  Loose stop  (2.0× ATR)
 ```
 
-The stop-loss only moves **up** (ratchets), never down — locking in gains as price rises.
+The stop-loss **ratchets upward only** — it never moves down — locking in gains as price rises.
 
-### 2. Static Sell Bot — Baseline Comparison
+### Strategy 2 — Static Sell Bot (Baseline)
 
-A fixed `2.0× ATR` trailing stop-loss with no AI adjustment. Used as a benchmark against the AI strategy.
+A fixed `2.0× ATR` trailing stop-loss with no AI adjustment. Used as a benchmark to measure the AI strategy's edge.
 
-### 3. Buy Bot — Optimized Entry
+### Strategy 3 — Buy Bot (Optimized Entry)
 
-Targets the daily low minus a small offset (`1% buy_offset`) to achieve a better-than-market entry price.
+Targets the **daily low minus a 1% offset** (`buy_offset`) to achieve a better-than-market entry price.
 
-### Strategy Comparison Output
+### Comparison Output
 
 ```
 --- BATTLE OF THE STRATEGIES ---
-Static 2% Strategy: {'Final Profit': ..., 'Peak Profit': ..., 'Retention %': ...}
-IntelliTrail AI:    {'Final Profit': ..., 'Peak Profit': ..., 'Retention %': ...}
+Static 2% Strategy:  { Final Profit: ...,  Peak Profit: ...,  Retention %: ... }
+IntelliTrail AI:     { Final Profit: ...,  Peak Profit: ...,  Retention %: ... }
 ```
 
 ---
 
 ## 📡 API Reference
 
-Base URL: `http://localhost:8000/api`
+**Base URL:** `http://localhost:8000/api`
 
-| Method | Endpoint      | Description                  |
-| ------ | ------------- | ---------------------------- |
-| GET    | `/`           | Health check — system status |
-| POST   | `/deploy-bot` | Deploy a new AI bot          |
-| GET    | `/orders`     | Fetch all executed orders    |
+| Method | Endpoint      | Description                          |
+| ------ | ------------- | ------------------------------------ |
+| `GET`  | `/`           | Health check — returns system status |
+| `POST` | `/deploy-bot` | Deploy a new AI trading bot          |
+| `GET`  | `/orders`     | Fetch all executed orders            |
 
-### POST `/deploy-bot` — Request Body
+---
+
+### `POST /deploy-bot`
+
+**Request Body**
 
 ```json
 {
@@ -290,7 +314,7 @@ Base URL: `http://localhost:8000/api`
 }
 ```
 
-### POST `/deploy-bot` — Response
+**Response**
 
 ```json
 {
@@ -310,9 +334,9 @@ Base URL: `http://localhost:8000/api`
 
 ## 📥 Data Pipeline
 
-Data is downloaded using `yfinance` via `scripts/download_data.py`.
+Market data is downloaded via `yfinance` using `scripts/download_data.py`.
 
-**Supported Tickers:**
+### Supported Tickers
 
 | Name     | Yahoo Finance Symbol |
 | -------- | -------------------- |
@@ -321,43 +345,45 @@ Data is downloaded using `yfinance` via `scripts/download_data.py`.
 | TCS      | `TCS.NS`             |
 | HDFCBANK | `HDFCBANK.NS`        |
 
-**Files generated:**
+### Output Files
 
-- `data/raw/{NAME}_daily.csv` — 2 years of daily OHLCV data
-- `data/raw/{NAME}_minute.csv` — 5 days of 1-minute OHLCV data
+| File                         | Content                       |
+| ---------------------------- | ----------------------------- |
+| `data/raw/{NAME}_daily.csv`  | 2 years of daily OHLCV data   |
+| `data/raw/{NAME}_minute.csv` | 5 days of 1-minute OHLCV data |
 
-The `data_loader.py` standardizes column names to lowercase and automatically detects and sets the date/timestamp column as the index.
+`data_loader.py` standardizes all column names to lowercase and automatically detects and sets the date/timestamp column as the DataFrame index.
 
 ---
 
 ## 💼 Portfolio Manager
 
-`PortfolioManager` (`core/portfolio_manager.py`) manages multiple simultaneous bots:
+`PortfolioManager` (`core/portfolio_manager.py`) lets you run multiple bots across different assets simultaneously.
 
 ```python
 pm = PortfolioManager()
 pm.add_bot("RELIANCE", strategy_type="SELL", target_price=2950.00)
-pm.add_bot("TCS", strategy_type="BUY", target_price=3800.00)
+pm.add_bot("TCS",      strategy_type="BUY",  target_price=3800.00)
 results = pm.run_all(data_dict, ai_model)
 ```
 
-`process_portfolio()` in `manager_logic.py` handles real-time multi-asset simulation by loading each ticker's minute CSV, applying indicators, and routing to the correct bot strategy.
+`process_portfolio()` in `manager_logic.py` handles real-time multi-asset simulation by loading each ticker's minute CSV, applying technical indicators, and routing each bot to the correct strategy engine.
 
 ---
 
 ## 🖥️ Frontend
 
-The React frontend (Vite + Tailwind) mirrors the original Streamlit dashboard with three main tabs:
+The React + Vite + Tailwind frontend provides a three-tab dashboard:
 
 ### 📊 Stats Tab — Fleet Overview
 
-- Total active bots, total shares, total P&L
-- Full fleet summary table with ticker, quantity, strategy, entry price, status, P&L
+- Total active bots, total shares held, aggregate P&L
+- Full fleet table: ticker, quantity, strategy, entry price, status, individual P&L
 
 ### 📈 Analytics Tab — Deep AI Insights
 
-- Candlestick chart with SMA-20, SMA-50, Bollinger Bands overlays
-- Technical indicators: Trend (Bullish/Bearish), Volatility (ATR%), RSI status, BB position
+- Candlestick chart with SMA-20, SMA-50, and Bollinger Bands overlays
+- Technical indicators: Trend (Bullish/Bearish), Volatility (ATR%), RSI status, Bollinger Band position
 - Performance metrics: Total Return %, 20-Day Volatility, Sharpe Ratio
 - AI Prediction panel: next close price + confidence score
 - Fundamental proxies: 10-day momentum, volume trend, support & resistance levels
@@ -371,36 +397,49 @@ The React frontend (Vite + Tailwind) mirrors the original Streamlit dashboard wi
 
 ## 🔮 Roadmap
 
-- [x] 🧠 Linear Regression AI model (SMA + RSI + ATR features)
-- [x] 🤖 AI Sell Bot with Dynamic Trailing Stop-Loss
-- [x] 🛒 Buy Bot with optimized entry logic
-- [x] 📉 Static vs AI strategy comparison engine
-- [x] 📥 yfinance data downloader (daily + minute)
-- [x] 🔧 Technical indicators (ATR, SMA, RSI) via pandas-ta
-- [x] ⚡ FastAPI backend with CORS
-- [x] ⚛️ React + Vite + Tailwind frontend
-- [x] 🔐 Supabase authentication
-- [x] 💼 Portfolio manager (multi-bot support)
-- [ ] 🗄️ Supabase DB integration for persistent order storage
-- [ ] 📡 Live market data feed (WebSocket)
-- [ ] 🔔 Price alert notifications
-- [ ] 📊 Advanced ML models (Random Forest, LSTM)
-- [ ] 🌐 Deploy to cloud (Railway / Vercel)
-- [ ] 📲 Mobile-responsive dashboard
-- [ ] 👤 User profile with bot history
+### ✅ Completed
+
+- [x] Linear Regression AI model (SMA + RSI + ATR features)
+- [x] AI Sell Bot with Dynamic Trailing Stop-Loss
+- [x] Buy Bot with optimized entry logic
+- [x] Static vs AI strategy comparison engine
+- [x] yfinance data downloader (daily + minute)
+- [x] Technical indicators (ATR, SMA, RSI) via pandas-ta
+- [x] FastAPI backend with CORS
+- [x] React + Vite + Tailwind frontend
+- [x] Supabase authentication
+- [x] Portfolio manager (multi-bot support)
+
+### 🔜 Coming Soon
+
+- [ ] Supabase DB integration for persistent order storage
+- [ ] Live market data feed via WebSocket
+- [ ] Price alert notifications
+- [ ] Advanced ML models (Random Forest, LSTM)
+- [ ] Cloud deployment (Railway / Vercel)
+- [ ] Mobile-responsive dashboard
+- [ ] User profile with full bot history
 
 ---
 
 ## 🤝 Contributing
 
-Pull requests are welcome. For major changes, open an issue first to discuss what you'd like to change.
+Contributions are welcome! For major changes, please open an issue first to discuss what you'd like to change. For smaller fixes and improvements, feel free to open a pull request directly.
+
+1. Fork the repository
+2. Create your feature branch: `git checkout -b feature/your-feature`
+3. Commit your changes: `git commit -m 'Add your feature'`
+4. Push to the branch: `git push origin feature/your-feature`
+5. Open a Pull Request
 
 ---
 
 ## 📄 License
 
-MIT — free to use, modify, and distribute.
+Distributed under the **MIT License** — free to use, modify, and distribute.
 
 ---
 
-<p align="center">Built with ❤️ for smarter trading · All Rights Reserved By IntelliTrail © 2025</p>
+<div align="center">
+  <sub>Built with ❤️ for Smarter Trading · All Rights Reserved By IntelliTrail © 2025</sub>
+</div>
