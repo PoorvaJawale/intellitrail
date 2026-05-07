@@ -2,20 +2,31 @@
 
 <br/>
 
-# 📈 IntelliTrail
 
-### AI-Powered Trading Bot Platform with Dynamic Trailing Stop-Loss
+<img src="./assets/icon.png" width="140"/>
+
+# IntelliTrail
+
+### Smarter AI Trading With Dynamic Risk Management
+
+<p align="center">
+  IntelliTrail is an AI-powered autonomous trading platform that combines
+  machine learning, technical indicators, and dynamic trailing stop-loss strategies
+  to help traders protect profits and reduce emotional decision-making.
+</p>
+
+<br/>
 
 <p>
   <img src="https://img.shields.io/badge/Python-3.10+-3776AB?style=for-the-badge&logo=python&logoColor=white"/>
-  <img src="https://img.shields.io/badge/FastAPI-0.100+-009688?style=for-the-badge&logo=fastapi&logoColor=white"/>
-  <img src="https://img.shields.io/badge/React-19-61DAFB?style=for-the-badge&logo=react&logoColor=white"/>
-  <img src="https://img.shields.io/badge/Tailwind-3.x-06B6D4?style=for-the-badge&logo=tailwindcss&logoColor=white"/>
-  <img src="https://img.shields.io/badge/Supabase-Auth%2FDB-3ECF8E?style=for-the-badge&logo=supabase&logoColor=white"/>
-  <img src="https://img.shields.io/badge/scikit--learn-ML-F7931E?style=for-the-badge&logo=scikit-learn&logoColor=white"/>
+  <img src="https://img.shields.io/badge/FastAPI-Backend-009688?style=for-the-badge&logo=fastapi&logoColor=white"/>
+  <img src="https://img.shields.io/badge/React-Frontend-61DAFB?style=for-the-badge&logo=react&logoColor=black"/>
+  <img src="https://img.shields.io/badge/TailwindCSS-UI-06B6D4?style=for-the-badge&logo=tailwindcss&logoColor=white"/>
+  <img src="https://img.shields.io/badge/Machine%20Learning-scikit--learn-F7931E?style=for-the-badge&logo=scikitlearn&logoColor=white"/>
+  <img src="https://img.shields.io/badge/Supabase-Authentication-3ECF8E?style=for-the-badge&logo=supabase&logoColor=white"/>
 </p>
+<br/>
 
-<p><strong>IntelliTrail</strong> deploys intelligent Buy & Sell bots that use a machine learning prediction engine to dynamically adjust trailing stop-loss levels in real time — helping you protect profits and optimize entries with minimal manual effort.</p>
 
 <a href="#-getting-started">Get Started</a> · <a href="#-api-reference">API Docs</a> · <a href="#-bot-strategies">Strategies</a> · <a href="#-roadmap">Roadmap</a>
 
@@ -24,6 +35,8 @@
 </div>
 
 ---
+
+<p align="left">
 
 ## 📌 Table of Contents
 
@@ -42,9 +55,10 @@
 - [Contributing](#-contributing)
 - [License](#-license)
 
+</p>
 ---
 
-## ✨ Features
+##  Features
 
 ### Core Trading Engine
 
@@ -70,7 +84,7 @@
 
 ---
 
-## 🧰 Tech Stack
+##  Tech Stack
 
 | Layer                | Technology                          |
 | -------------------- | ----------------------------------- |
@@ -153,7 +167,7 @@ intellitrail/
 
 ---
 
-## 🚀 Getting Started
+##  Getting Started
 
 ### Prerequisites
 
@@ -288,7 +302,7 @@ IntelliTrail AI:     { Final Profit: ...,  Peak Profit: ...,  Retention %: ... }
 
 ---
 
-## 📡 API Reference
+##  API Reference
 
 **Base URL:** `http://localhost:8000/api`
 
@@ -371,16 +385,16 @@ results = pm.run_all(data_dict, ai_model)
 
 ---
 
-## 🖥️ Frontend
+##  Frontend
 
 The React + Vite + Tailwind frontend provides a three-tab dashboard:
 
-### 📊 Stats Tab — Fleet Overview
+###  Stats Tab — Fleet Overview
 
 - Total active bots, total shares held, aggregate P&L
 - Full fleet table: ticker, quantity, strategy, entry price, status, individual P&L
 
-### 📈 Analytics Tab — Deep AI Insights
+###  Analytics Tab — Deep AI Insights
 
 - Candlestick chart with SMA-20, SMA-50, and Bollinger Bands overlays
 - Technical indicators: Trend (Bullish/Bearish), Volatility (ATR%), RSI status, Bollinger Band position
@@ -388,14 +402,14 @@ The React + Vite + Tailwind frontend provides a three-tab dashboard:
 - AI Prediction panel: next close price + confidence score
 - Fundamental proxies: 10-day momentum, volume trend, support & resistance levels
 
-### 💼 Portfolio Tab — Command Center
+###  Portfolio Tab — Command Center
 
 - Deploy bot form: stock selector, strategy (Buy/Sell), quantity, simulation days
 - Active positions: execution summary, live P&L chart, execution log, terminate button
 
 ---
 
-## 🔮 Roadmap
+##  Roadmap
 
 ### ✅ Completed
 
